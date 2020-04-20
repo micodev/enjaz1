@@ -18,9 +18,10 @@ class bookController extends Controller
     public function create(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-      //  $user = User::where('id', '1')->first();
+        //  $user = User::where('id', '1')->first();
+        $request = $request->json()->all();
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request, [
             'type_id' => 'required',
             'doc_date' => 'required',
             'note' => 'required',
@@ -29,7 +30,7 @@ class bookController extends Controller
             'destination' => 'required',
             'action_id' => 'required',
             'title' => 'required',
-            
+
         ]);
 
         if ($validator->fails())
@@ -96,17 +97,19 @@ class bookController extends Controller
 
     public function deleteImage(Request $request)
     {
+        $request = $request->json()->all();
+
         $id = $request['book_id'];
         $path = $request['img_path'];
         $book = Book::where('id', $id)->first();
         $images = $book->images;
 
-       // $path = "/images/book/15870461461adad54ddb6b9b9008426595297b0329.jpg";
+        // $path = "/images/book/15870461461adad54ddb6b9b9008426595297b0329.jpg";
         $images =   array_diff($images, [$path]);
         $book->images = $images;
         $book->save();
         if (File::exists($path)) {
-        File::delete($path);
+            File::delete($path);
         }
     }
 
@@ -138,6 +141,7 @@ class bookController extends Controller
 
     public function search(Request $request)
     {
+        $request = $request->json()->all();
 
         $title = $request['title'];
         $destination = $request['destination'];
@@ -205,8 +209,9 @@ class bookController extends Controller
     {
         //  $user = $this->getUser($request->bearerToken());
         $user = User::where('id', '1')->first();
+        $request = $request->json()->all();
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request, [
             'type_id' => 'required',
             'doc_date' => 'required',
             'note' => 'required',

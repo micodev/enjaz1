@@ -24,8 +24,8 @@ class paperController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
        // $user = User::where('id', '1')->first();
-
-        $validator = Validator::make($request->all(), [
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'title' => 'required',
             'doc_date' => 'required',
             'note' => 'required',
@@ -71,7 +71,7 @@ class paperController extends Controller
 
     public function showPapers()
     {
-        $papers = Paper::orderBy('created_at', 'desc')->paginate(1);
+        $papers = Paper::orderBy('created_at', 'desc')->paginate(5);
 
         return response()->json([
             'response' => $papers
@@ -80,6 +80,8 @@ class paperController extends Controller
 
     public function delete(Request $request)
     {
+        $request = $request->json()->all();
+
         $id = $request['id'];
         $paper = Paper::where('id', $id)->first()->delete();
         return response()->json([
@@ -89,6 +91,8 @@ class paperController extends Controller
 
     public function search(Request $request)
     {
+        $request = $request->json()->all();
+
 
         $title = $request['title'];
       
@@ -127,6 +131,8 @@ class paperController extends Controller
 
     public function searchPaper(Request $request)
     {
+        $request = $request->json()->all();
+
         $papers = Paper::with(['company', 'user'])->orderBy('created_at', 'desc');
         if (isset($request['title']))
             $papers = $papers->where('title', 'like', '%' . $request['title'] . '%');
@@ -144,6 +150,8 @@ class paperController extends Controller
 
     public function deleteImage(Request $request)
     {
+       
+
         $id = $request['paper_id'];
         $paper = Paper::where('id', $id)->first();
         $images = $paper->images;
@@ -160,6 +168,7 @@ class paperController extends Controller
     public function update(Request $request)
     {
         //  $user = $this->getUser($request->bearerToken());
+        
         $user = User::where('id', '1')->first();
 
         $validator = Validator::make($request->all(), [
