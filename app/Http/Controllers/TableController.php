@@ -8,7 +8,7 @@ use App\State;
 use App\Role;
 use App\Type;
 use App\Action;
-use App\company;
+use App\Company;
 
 class TableController extends Controller
 {
