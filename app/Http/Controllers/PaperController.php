@@ -63,7 +63,7 @@ class paperController extends Controller
             'images' => $images
 
         ]);
-        return $p->images;
+      //  return $p->images;
         return response()->json([
             'response' => 'done'
         ]);

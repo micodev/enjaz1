@@ -23,7 +23,7 @@ Route::post('/search', 'PaperController@search');
 Route::put('/update', 'PaperController@update');
 
 Route::post('/login/user', 'LoginController@userLogin');
-Route::post('/register/user', 'LoginController@userRegister');
+Route::post('/register/user', 'RegisterController@userRegister');
 
 Route::post('/add/paper', 'PaperController@create');
 Route::post('/add/book', 'BookController@create');
