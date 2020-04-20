@@ -143,47 +143,49 @@ class bookController extends Controller
     {
         $request = $request->json()->all();
 
-        $title = $request['title'];
-        $destination = $request['destination'];
-        $doc_number = $request['doc_number'];
-        $type = $request['type_id'];
-        $state = $request['state_id'];
-        $company_id = $request['company_id'];
-        $action = $request['action_id'];
+        // $title = $request['title'];
+        // $destination = $request['destination'];
+        // $doc_number = $request['doc_number'];
+        // $type = $request['type_id'];
+        // $state = $request['state_id'];
+        // $company_id = $request['company_id'];
+        // $action = $request['action_id'];
         $empty = true;
 
         $books = Book::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc');
-        if ($company_id != null) {
-            $books = $books->where('company_id', $company_id);
-            $empty = false;
-        }
-        if ($title != null) {
-            $books = $books->where('title', 'like', '%' . $title . '%');
+        if (isset($request['company_id'])) {
 
-            $empty = false;
-        }
-        if ($destination != null) {
-            $books = $books->where('destination', 'like', '%' . $destination . '%');
+            $books = $books->where('company_id', $request['company_id']);
             $empty = false;
         }
 
-        if ($type != null) {
-            $books = $books->where('type_id', $type);
-
+        if (isset($request['title'])) {
+            $books = $books->where('title', 'like', '%' . $request['title'] . '%');
             $empty = false;
         }
-        if ($state != null) {
-            $books = $books->where('state_id', $state);
+
+        if (isset($request['destination'])) {
+            $books = $books->where('destination', 'like', '%' . $request['destination'] . '%');
             $empty = false;
         }
-        if ($action != null) {
-            $books = $books->where('action_id', $action);
 
+
+        if (isset($request['type_id'])) {
+            $books = $books->where('type_id', $request['type_id']);
             $empty = false;
         }
-        if ($doc_number != null) {
-            $books = $books->where('doc_number', $doc_number);
 
+        if (isset($request['state_id'])) {
+            $books = $books->where('state_id', $request['state_id']);
+            $empty = false;
+        }
+
+        if (isset($request['action_id'])) {
+            $books = $books->where('action_id', $request['action_id']);
+            $empty = false;
+        }
+        if (isset($request['doc_number'])) {
+            $books = $books->where('doc_number', $request['doc_number']);
             $empty = false;
         }
 

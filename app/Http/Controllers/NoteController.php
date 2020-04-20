@@ -165,31 +165,31 @@ class noteController extends Controller
         $request = $request->json()->all();
 
 
-        $title = $request['title'];
-        $doc_number = $request['doc_number'];
-        $company_id = $request['company_id'];
-        $incoming = $request['incoming'];
-        $outcoming = $request['outcoming'];
+        // $title = $request['title'];
+        // $doc_number = $request['doc_number'];
+        // $company_id = $request['company_id'];
+        // $incoming = $request['incoming'];
+        // $outcoming = $request['outcoming'];
         $empty = true;
         $notes = Note::with(['company', 'user'])->orderBy('created_at', 'desc');
-        if ($company_id != null) {
-            $notes = $notes->where('company_id', $company_id);
+        if (isset($request['company_id'])) {
+            $notes = $notes->where('company_id', $request['company_id']);
             $empty = false;
         }
-        if ($title != null) {
-            $notes = $notes->where('title', 'like', '%' . $title . '%');
+        if (isset($request['title'])) {
+            $notes = $notes->where('title', 'like', '%' . $request['title'] . '%');
             $empty = false;
         }
-        if ($incoming != null) {
-            $notes = $notes->where('incoming', 'like', '%' . $incoming . '%');
+        if ($request['incoming']) {
+            $notes = $notes->where('incoming', 'like', '%' . $request['incoming'] . '%');
             $empty = false;
         }
-        if ($outcoming != null) {
-            $notes = $notes->where('outcoming', 'like', '%' . $outcoming . '%');
+        if (isset($request['outcoming'])) {
+            $notes = $notes->where('outcoming', 'like', '%' . $request['outcoming'] . '%');
             $empty = false;
         }
-        if ($doc_number != null) {
-            $notes = $notes->where('doc_number', $doc_number);
+        if (isset($request['doc_number'])) {
+            $notes = $notes->where('doc_number', $request['doc_number']);
             $empty = false;
         }
 

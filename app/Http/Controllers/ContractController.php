@@ -195,49 +195,49 @@ class contractController extends Controller
     {
         $request = $request->json()->all();
 
-        $title = $request['title'];
-        $destination = $request['destination'];
-        $doc_number = $request['doc_number'];
-        $type = $request['type_id'];
-        $state = $request['state_id'];
-        $company_id = $request['company_id'];
-        $action = $request['action_id'];
+        // $title = $request['title'];
+        // $destination = $request['destination'];
+        // $doc_number = $request['doc_number'];
+        // $type = $request['type_id'];
+        // $state = $request['state_id'];
+        // $company_id = $request['company_id'];
+        // $action = $request['action_id'];
         $empty = true;
 
         $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc');
-        if ($company_id != null) {
+        if (isset($request['company_id'])) {
 
-            $contracts = $contracts->where('company_id', $company_id);
+            $contracts = $contracts->where('company_id', $request['company_id']);
             $empty = false;
         }
 
-        if ($title != null) {
-            $contracts = $contracts->where('title', 'like', '%' . $title . '%');
+        if (isset($request['title'])) {
+            $contracts = $contracts->where('title', 'like', '%' . $request['title'] . '%');
             $empty = false;
         }
 
-        if ($destination != null) {
-            $contracts = $contracts->where('destination', 'like', '%' . $destination . '%');
+        if (isset($request['destination'])) {
+            $contracts = $contracts->where('destination', 'like', '%' . $request['destination'] . '%');
             $empty = false;
         }
 
 
-        if ($type != null) {
-            $contracts = $contracts->where('type_id', $type);
+        if (isset($request['type_id'])) {
+            $contracts = $contracts->where('type_id', $request['type_id']);
             $empty = false;
         }
 
-        if ($state != null) {
-            $contracts = $contracts->where('state_id', $state);
+        if (isset($request['state_id'])) {
+            $contracts = $contracts->where('state_id', $request['state_id']);
             $empty = false;
         }
 
-        if ($action != null) {
-            $contracts = $contracts->where('action_id', $action);
+        if (isset($request['action_id'])) {
+            $contracts = $contracts->where('action_id', $request['action_id']);
             $empty = false;
         }
-        if ($doc_number != null) {
-            $contracts = $contracts->where('doc_number', $doc_number);
+        if (isset($request['doc_number'])) {
+            $contracts = $contracts->where('doc_number', $request['doc_number']);
             $empty = false;
         }
 

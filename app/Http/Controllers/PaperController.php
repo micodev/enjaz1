@@ -94,18 +94,18 @@ class paperController extends Controller
         $request = $request->json()->all();
 
 
-        $title = $request['title'];
+        // $title = $request['title'];
       
-        $company_id = $request['company_id'];
+        // $company_id = $request['company_id'];
         $papers = Paper::with(['company', 'user'])->orderBy('created_at', 'desc');
         $empty = true;
-        if ($company_id != null){
-            $papers = $papers->where('company_id', $company_id);
+        if (isset($request['company_id'])){
+            $papers = $papers->where('company_id', $request['company_id']);
             $empty = false;
             
         }
-        if ($title != null){
-            $papers = $papers->where('title', 'like', '%' . $title . '%');
+        if (isset($request['title'])){
+            $papers = $papers->where('title', 'like', '%' . $request['title'] . '%');
             $empty = false;
 
         }
