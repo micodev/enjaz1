@@ -16,7 +16,8 @@ class TableController extends Controller
 
     public function addState(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'value' => 'required'
         ]);
         if ($validator->fails())
@@ -35,7 +36,8 @@ class TableController extends Controller
     }
     public function addType(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'value' => 'required',
             'table' => 'required'
         ]);
@@ -56,7 +58,8 @@ class TableController extends Controller
     }
     public function addRole(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'value' => 'required'
         ]);
         if ($validator->fails())
@@ -75,7 +78,8 @@ class TableController extends Controller
     }
     public function addAction(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'value' => 'required'
         ]);
         if ($validator->fails())
@@ -95,7 +99,8 @@ class TableController extends Controller
 
     public function addCompany(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'value' => 'required'
         ]);
         if ($validator->fails())
@@ -121,7 +126,8 @@ class TableController extends Controller
 
     public function deleteState(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'state_id' => 'required'
         ]);
         if ($validator->fails())
@@ -138,7 +144,8 @@ class TableController extends Controller
 
     public function deleteType(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'type_id' => 'required'
         ]);
         if ($validator->fails())
@@ -155,7 +162,8 @@ class TableController extends Controller
 
     public function deleteRole(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'role_id' => 'required'
         ]);
         if ($validator->fails())
@@ -172,7 +180,8 @@ class TableController extends Controller
 
     public function deleteAction(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'action_id' => 'required'
         ]);
         if ($validator->fails())
@@ -188,7 +197,8 @@ class TableController extends Controller
     }
     public function deleteCompany(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'company_id' => 'required'
         ]);
         if ($validator->fails())
