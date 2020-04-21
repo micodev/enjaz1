@@ -19,10 +19,10 @@ class noteController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
        // $user = User::where('id', '1')->first();
-       $request = $request->json()->all();
+      // $request = $request->json()->all();
 
 
-        $validator = Validator::make($request, [
+        $validator = Validator::make($request->all(), [
 
             'doc_date' => 'required',
             'note' => 'required',
@@ -215,9 +215,9 @@ class noteController extends Controller
     {
       $user = $this->getUser($request->bearerToken());
        // $user = User::where('id', '1')->first();
-        $request = $request->json()->all();
+      //  $request = $request->json()->all();
 
-        $validator = Validator::make($request, [
+        $validator = Validator::make($request->all(), [
             'id' => 'required',
             'title' => 'required',
             'doc_date' => 'required',

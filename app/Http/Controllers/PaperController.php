@@ -24,8 +24,8 @@ class paperController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
        // $user = User::where('id', '1')->first();
-        $request = $request->json()->all();
-        $validator = Validator::make($request, [
+       // $request = $request->json()->all();
+        $validator = Validator::make($request->all(), [
             'title' => 'required',
             'doc_date' => 'required',
             'note' => 'required',

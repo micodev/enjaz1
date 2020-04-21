@@ -19,9 +19,9 @@ class bookController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
         //  $user = User::where('id', '1')->first();
-        $request = $request->json()->all();
+      //  $request = $request->json()->all();
 
-        $validator = Validator::make($request, [
+        $validator = Validator::make($request->all(), [
             'type_id' => 'required',
             'doc_date' => 'required',
             'note' => 'required',
@@ -211,9 +211,9 @@ class bookController extends Controller
     {
         //  $user = $this->getUser($request->bearerToken());
         $user = User::where('id', '1')->first();
-        $request = $request->json()->all();
+      //  $request = $request->json()->all();
 
-        $validator = Validator::make($request, [
+        $validator = Validator::make($request->all(), [
             'type_id' => 'required',
             'doc_date' => 'required',
             'note' => 'required',
