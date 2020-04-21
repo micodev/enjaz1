@@ -255,6 +255,10 @@ class TableController extends Controller
 
     public function test(Request $request)
     {
+        if ($request->all() == null)
+        return response()->json([
+            "respone" => "false"
+        ]);
         return response()->json($request);
     }
 
