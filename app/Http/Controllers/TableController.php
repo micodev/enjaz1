@@ -256,9 +256,11 @@ class TableController extends Controller
     public function test(Request $request)
     {
         return response()->json([
-            'header' => $request->headers->all()
+            'header' => $request->headers->all(),
+            'body' => $request->all()
+            
         ]);
-        if ($request->all() != null)
+        if ($request->all())
             return response()->json([
                 "respone" => [
                     "type" => "form data",
