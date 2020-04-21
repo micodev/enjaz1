@@ -255,7 +255,7 @@ class TableController extends Controller
 
     public function test(Request $request)
     {
-        dd($request);
+        return response()->json($request);
     }
 
 
