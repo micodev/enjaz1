@@ -21,9 +21,9 @@ class TableController extends Controller
             'value' => 'required'
         ]);
         if ($validator->fails())
-        return response()->json([
-            'errors' => $validator->errors()
-        ]);
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
 
 
         State::create([
@@ -42,9 +42,9 @@ class TableController extends Controller
             'table' => 'required'
         ]);
         if ($validator->fails())
-        return response()->json([
-            'errors' => $validator->errors()
-        ]);
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
 
 
         Type::create([
@@ -63,9 +63,9 @@ class TableController extends Controller
             'value' => 'required'
         ]);
         if ($validator->fails())
-        return response()->json([
-            'errors' => $validator->errors()
-        ]);
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
 
 
         Role::create([
@@ -83,9 +83,9 @@ class TableController extends Controller
             'value' => 'required'
         ]);
         if ($validator->fails())
-        return response()->json([
-            'errors' => $validator->errors()
-        ]);
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
 
 
         Action::create([
@@ -104,9 +104,9 @@ class TableController extends Controller
             'value' => 'required'
         ]);
         if ($validator->fails())
-        return response()->json([
-            'errors' => $validator->errors()
-        ]);
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
 
 
         Company::create([
@@ -131,9 +131,9 @@ class TableController extends Controller
             'state_id' => 'required'
         ]);
         if ($validator->fails())
-        return response()->json([
-            'errors' => $validator->errors()
-        ]);
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
         $id = $request['state_id'];
         State::where('id', $id)->first()->delete();
 
@@ -149,9 +149,9 @@ class TableController extends Controller
             'type_id' => 'required'
         ]);
         if ($validator->fails())
-        return response()->json([
-            'errors' => $validator->errors()
-        ]);
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
         $id = $request['type_id'];
         Type::where('id', $id)->first()->delete();
 
@@ -167,9 +167,9 @@ class TableController extends Controller
             'role_id' => 'required'
         ]);
         if ($validator->fails())
-        return response()->json([
-            'errors' => $validator->errors()
-        ]);
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
         $id = $request['role_id'];
         Role::where('id', $id)->first()->delete();
 
@@ -185,9 +185,9 @@ class TableController extends Controller
             'action_id' => 'required'
         ]);
         if ($validator->fails())
-        return response()->json([
-            'errors' => $validator->errors()
-        ]);
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
         $id = $request['action_id'];
         Action::where('id', $id)->first()->delete();
 
@@ -202,9 +202,9 @@ class TableController extends Controller
             'company_id' => 'required'
         ]);
         if ($validator->fails())
-        return response()->json([
-            'errors' => $validator->errors()
-        ]);
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
         $id = $request['company_id'];
         Company::where('id', $id)->first()->delete();
 
@@ -255,12 +255,24 @@ class TableController extends Controller
 
     public function test(Request $request)
     {
-        if ($request->all() == null)
+        if ($request->all() != null)
+            return response()->json([
+                "respone" => [
+                    "type" => "form data",
+                    "body" => $request->all()
+                ]
+            ]);
+        else if ($request->json()->all() != null) {
+            return response()->json([
+                "respone" => [
+                    "type" => "json",
+                    "body" => $request->json()->all()
+                ]
+            ]);
+        }
+
         return response()->json([
-            "respone" => "false"
+            "response" => "false"
         ]);
-        return response()->json($request);
     }
-
-
 }
