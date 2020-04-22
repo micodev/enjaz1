@@ -25,7 +25,7 @@ Route::put('/update', 'PaperController@update');
 Route::post('/login/user', 'LoginController@userLogin');
 Route::post('/register/user', 'RegisterController@userRegister');
 
-Route::post('/test', 'TableController@test');
+Route::get('/test', 'TableController@test');
 
 Route::post('/add/paper', 'PaperController@create');
 Route::post('/add/book', 'BookController@create');
