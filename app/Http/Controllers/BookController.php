@@ -19,9 +19,9 @@ class bookController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
         //  $user = User::where('id', '1')->first();
-      //  $request = $request->json()->all();
+        $request = $request->json()->all();
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request, [
             'type_id' => 'required',
             'doc_date' => 'required',
             'note' => 'required',
@@ -40,15 +40,30 @@ class bookController extends Controller
 
 
         $images = '';
-        if ($request->hasFile('images')) {
+        if (isset($request['images'])) {
             $names = [];
-            foreach ($request->image as $image) {
+            foreach ($request['images'] as $image) {
 
 
-                $Path = public_path() . '/images/book/';
-                $filename = time() . $image->getClientOriginalName();
-                $ex = $image->getClientOriginalExtension();
-                $image->move($Path, $filename);
+                // $Path = public_path() . '/images/book/';
+                // $filename = time() . $image->getClientOriginalName();
+                // $ex = $image->getClientOriginalExtension();
+                // $image->move($Path, $filename);
+
+                // array_push($names, '/images/book/' . $filename);
+
+                $image = explode(',', $image)[1];
+       
+                $imgdata = base64_decode($image);
+               
+                $f = finfo_open();
+                $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
+                //return $mime_type;
+                $type = explode('/', $mime_type)[1];
+        
+                //  $image = str_replace(' ', '+', $image);
+                $filename = time() . Str::random(2) . '.' . $type;
+                File::put(public_path() . '/images/book/' . $filename, $imgdata);
 
                 array_push($names, '/images/book/' . $filename);
             }
@@ -86,6 +101,7 @@ class bookController extends Controller
 
     public function delete(Request $request)
     {
+        $request = $request->json()->all();
         $id = $request['id'];
         $book = Book::where('id', $id)->first()->delete();
         return response()->json([
@@ -211,9 +227,9 @@ class bookController extends Controller
     {
         //  $user = $this->getUser($request->bearerToken());
         $user = User::where('id', '1')->first();
-      //  $request = $request->json()->all();
+        $request = $request->json()->all();
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request, [
             'type_id' => 'required',
             'doc_date' => 'required',
             'note' => 'required',
@@ -231,15 +247,30 @@ class bookController extends Controller
             ]);
         //  dd($request->image);
         $images = [];
-        if ($request->hasFile('images')) {
+        if (isset($request['images'])) {
             $names = [];
-            foreach ($request->images as $image) {
+            foreach ($request['images'] as $image) {
 
 
-                $Path = public_path() . '/images/book/';
-                $filename = time() . $image->getClientOriginalName();
-                $ex = $image->getClientOriginalExtension();
-                $image->move($Path, $filename);
+                // $Path = public_path() . '/images/book/';
+                // $filename = time() . $image->getClientOriginalName();
+                // $ex = $image->getClientOriginalExtension();
+                // $image->move($Path, $filename);
+
+                // array_push($names, '/images/book/' . $filename);
+
+                $image = explode(',', $image)[1];
+       
+                $imgdata = base64_decode($image);
+               
+                $f = finfo_open();
+                $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
+                //return $mime_type;
+                $type = explode('/', $mime_type)[1];
+        
+                //  $image = str_replace(' ', '+', $image);
+                $filename = time() . Str::random(2) . '.' . $type;
+                File::put(public_path() . '/images/book/' . $filename, $imgdata);
 
                 array_push($names, '/images/book/' . $filename);
             }

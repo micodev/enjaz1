@@ -165,7 +165,7 @@ class paperController extends Controller
 
     public function deleteImage(Request $request)
     {
-       
+       $request = $request->json()->all();
 
         $id = $request['paper_id'];
         $paper = Paper::where('id', $id)->first();
@@ -185,8 +185,9 @@ class paperController extends Controller
         //  $user = $this->getUser($request->bearerToken());
         
         $user = User::where('id', '1')->first();
+        $request = $request->json()->all();
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request, [
             'id' => 'required',
             'title' => 'required',
             'doc_date' => 'required',
@@ -202,7 +203,7 @@ class paperController extends Controller
         $images = [];
         if (isset($request['images'])) {
             $names = [];
-            foreach ($request->images as $image) {
+            foreach ($request['images'] as $image) {
 
 
                 // $Path = public_path() . '/images/paper/';

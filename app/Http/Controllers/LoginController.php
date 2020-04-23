@@ -16,8 +16,8 @@ class LoginController extends Controller
 
     public function userLogin(Request $request)
     {
-     //  $request = $request->json()->all();
-        $validator = Validator::make($request->all(), [
+       $request = $request->json()->all();
+        $validator = Validator::make($request, [
             'username' => 'required',
             'password' => 'required'
         ]);
@@ -42,7 +42,7 @@ class LoginController extends Controller
         }else  return response()->json([
             'response' => 'unauthorized'
         ]);
-        
+
     }
     
 }
