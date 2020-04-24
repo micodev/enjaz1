@@ -26,7 +26,9 @@ class paperController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
        // $user = User::where('id', '1')->first();
-        $request = $request->json()->all();
+       $request =json_decode($request->getContent(), true);
+     
+       
         $validator = Validator::make($request, [
             'title' => 'required',
             'doc_date' => 'required',
@@ -95,8 +97,7 @@ class paperController extends Controller
 
     public function delete(Request $request)
     {
-        $request = $request->json()->all();
-
+        $request =json_decode($request->getContent(), true);
         $id = $request['id'];
         $paper = Paper::where('id', $id)->first()->delete();
         return response()->json([
@@ -106,7 +107,7 @@ class paperController extends Controller
 
     public function search(Request $request)
     {
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
 
         // $title = $request['title'];
@@ -185,7 +186,7 @@ class paperController extends Controller
         //  $user = $this->getUser($request->bearerToken());
         
         $user = User::where('id', '1')->first();
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [
             'id' => 'required',
