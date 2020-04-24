@@ -13,7 +13,8 @@ class registerController extends Controller
 
     public function userRegister(Request $request)
     {
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
+
         $validator = Validator::make($request, [
             'name' => 'required',
             'username' => 'required | unique:users',
