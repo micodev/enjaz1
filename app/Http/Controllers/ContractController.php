@@ -20,7 +20,8 @@ class contractController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
        // $user = User::where('id', '1')->first();
-       $request = $request->json()->all();
+       $request =json_decode($request->getContent(), true);
+
 
         $validator = Validator::make($request, [
             'type' => 'required',
@@ -99,7 +100,7 @@ class contractController extends Controller
 
     public function delete(Request $request)
     {
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
         $id = $request['id'];
         $contract = Contract::where('id', $id)->first()->delete();
@@ -139,7 +140,7 @@ class contractController extends Controller
     // }
     public function deleteImage(Request $request)
     {
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
         $id = $request['contract_id'];
 
@@ -209,7 +210,7 @@ class contractController extends Controller
 
     public function search(Request $request)
     {
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
         // $title = $request['title'];
         // $destination = $request['destination'];
@@ -280,7 +281,7 @@ class contractController extends Controller
     {
         //  $user = $this->getUser($request->bearerToken());
         $user = User::where('id', '1')->first();
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [
             'type_id' => 'required',

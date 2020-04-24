@@ -166,7 +166,7 @@ class paperController extends Controller
 
     public function deleteImage(Request $request)
     {
-       $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
         $id = $request['paper_id'];
         $paper = Paper::where('id', $id)->first();

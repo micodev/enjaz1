@@ -19,7 +19,7 @@ class bookController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
         //  $user = User::where('id', '1')->first();
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [
             'type_id' => 'required',
@@ -101,7 +101,7 @@ class bookController extends Controller
 
     public function delete(Request $request)
     {
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
         $id = $request['id'];
         $book = Book::where('id', $id)->first()->delete();
         return response()->json([
@@ -113,7 +113,7 @@ class bookController extends Controller
 
     public function deleteImage(Request $request)
     {
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
         $id = $request['book_id'];
         $path = $request['img_path'];
@@ -157,15 +157,7 @@ class bookController extends Controller
 
     public function search(Request $request)
     {
-        $request = $request->json()->all();
-
-        // $title = $request['title'];
-        // $destination = $request['destination'];
-        // $doc_number = $request['doc_number'];
-        // $type = $request['type_id'];
-        // $state = $request['state_id'];
-        // $company_id = $request['company_id'];
-        // $action = $request['action_id'];
+        $request =json_decode($request->getContent(), true);
         $empty = true;
 
         $books = Book::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc');
@@ -227,7 +219,7 @@ class bookController extends Controller
     {
         //  $user = $this->getUser($request->bearerToken());
         $user = User::where('id', '1')->first();
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [
             'type_id' => 'required',
@@ -251,13 +243,6 @@ class bookController extends Controller
             $names = [];
             foreach ($request['images'] as $image) {
 
-
-                // $Path = public_path() . '/images/book/';
-                // $filename = time() . $image->getClientOriginalName();
-                // $ex = $image->getClientOriginalExtension();
-                // $image->move($Path, $filename);
-
-                // array_push($names, '/images/book/' . $filename);
 
                 $image = explode(',', $image)[1];
        

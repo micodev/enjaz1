@@ -16,7 +16,8 @@ class LoginController extends Controller
 
     public function userLogin(Request $request)
     {
-       $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
+
         $validator = Validator::make($request, [
             'username' => 'required',
             'password' => 'required'

@@ -20,7 +20,7 @@ class noteController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
        // $user = User::where('id', '1')->first();
-       $request = $request->json()->all();
+       $request =json_decode($request->getContent(), true);
 
 
         $validator = Validator::make($request, [
@@ -99,7 +99,7 @@ class noteController extends Controller
 
     public function delete(Request $request)
     {
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
         $id = $request['id'];
         $note = Note::where('id', $id)->first()->delete();
@@ -137,7 +137,7 @@ class noteController extends Controller
 
     public function deleteImage(Request $request)
     {
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
         $id = $request['note_id'];
         $note = Note::where('id', $id)->first();
@@ -178,7 +178,7 @@ class noteController extends Controller
 
     public function search(Request $request)
     {
-        $request = $request->json()->all();
+        $request =json_decode($request->getContent(), true);
 
 
         // $title = $request['title'];
@@ -231,7 +231,7 @@ class noteController extends Controller
     {
       $user = $this->getUser($request->bearerToken());
        // $user = User::where('id', '1')->first();
-        $request = $request->json()->all();
+       $request =json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [
             'id' => 'required',
