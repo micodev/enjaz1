@@ -88,7 +88,7 @@ class paperController extends Controller
 
     public function showPapers()
     {
-        $papers = Paper::orderBy('created_at', 'desc')->paginate(5);
+        $papers = Paper::with(['company', 'user'])->orderBy('created_at', 'desc')->paginate(5);
 
         return response()->json([
             'response' => $papers
@@ -179,6 +179,9 @@ class paperController extends Controller
         if (File::exists($path)) {
             File::delete($path);
         }
+        return response()->json([
+            'response' => 'done'
+        ]);
     }
 
     public function update(Request $request)

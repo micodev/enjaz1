@@ -94,7 +94,7 @@ class bookController extends Controller
     public function showBooks()
     {
         //  $user = $this->getUser($request->bearerToken());
-        $books = Book::orderBy('created_at', 'desc')->paginate(1);
+        $books = Book::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc')->paginate(5);
         return response()->json([
             'response' => $books
         ]);
@@ -128,6 +128,9 @@ class bookController extends Controller
         if (File::exists($path)) {
             File::delete($path);
         }
+        return response()->json([
+            'response' => 'done'
+        ]);
     }
 
     public function searchBook(Request $request) // for mobile

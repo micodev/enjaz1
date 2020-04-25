@@ -91,7 +91,7 @@ class noteController extends Controller
 
     public function showNotes()
     {
-        $notes = Note::orderBy('created_at', 'desc')->paginate(1);
+        $notes = Note::with(['company', 'user'])->orderBy('created_at', 'desc')->paginate(5);
         return response()->json([
             'response' => $notes
         ]);
@@ -150,6 +150,9 @@ class noteController extends Controller
         if (File::exists($path)) {
             File::delete($path);
         }
+        return response()->json([
+            'response' => 'done'
+        ]);
     }
 
     public function searchNote(Request $request) //mobile search

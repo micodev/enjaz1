@@ -92,7 +92,7 @@ class contractController extends Controller
     }
     public function showContracts()
     {
-        $contracts = Contract::orderBy('created_at', 'desc')->paginate(1);
+        $contracts =Contract::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc')->paginate(5);
         return response()->json([
             'response' => $contracts
         ]);
@@ -154,6 +154,9 @@ class contractController extends Controller
         if (File::exists($path)) {
             File::delete($path);
         }
+        return response()->json([
+            'response' => 'done'
+        ]);
     }
 
     // public function search(Request $request)
