@@ -7,6 +7,7 @@ use App\User;
 use App\Book;
 use App\Token;
 use Validator;
+use File;
 
 class bookController extends Controller
 {
@@ -69,7 +70,7 @@ class bookController extends Controller
             }
             $images = $names;
         }
-        // return $images;
+       
         $b =  Book::create([
             'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
@@ -84,7 +85,7 @@ class bookController extends Controller
             'title' => $request['title']
 
         ]);
-        //  return json_decode($b->images);
+        
         return response()->json([
             'response' => 'done'
         ]);
@@ -217,8 +218,8 @@ class bookController extends Controller
 
     public function update(Request $request)
     {
-        //  $user = $this->getUser($request->bearerToken());
-        $user = User::where('id', '1')->first();
+          $user = $this->getUser($request->bearerToken());
+       // $user = User::where('id', '1')->first();
         $request =json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [

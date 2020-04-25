@@ -183,9 +183,9 @@ class paperController extends Controller
 
     public function update(Request $request)
     {
-        //  $user = $this->getUser($request->bearerToken());
+          $user = $this->getUser($request->bearerToken());
         
-        $user = User::where('id', '1')->first();
+       // $user = User::where('id', '1')->first();
         $request =json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [

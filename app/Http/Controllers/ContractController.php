@@ -85,7 +85,7 @@ class contractController extends Controller
             'title' => $request['title']
 
         ]);
-        return $b->images;
+       // return $b->images;
         return response()->json([
             'response' => 'done'
         ]);
@@ -279,8 +279,8 @@ class contractController extends Controller
     }
     public function update(Request $request)
     {
-        //  $user = $this->getUser($request->bearerToken());
-        $user = User::where('id', '1')->first();
+          $user = $this->getUser($request->bearerToken());
+       // $user = User::where('id', '1')->first();
         $request =json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [
