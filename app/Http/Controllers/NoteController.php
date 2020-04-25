@@ -199,7 +199,7 @@ class noteController extends Controller
             $notes = $notes->where('title', 'like', '%' . $request['title'] . '%');
             $empty = false;
         }
-        if ($request['incoming']) {
+        if (isset($request['incoming'])) {
             $notes = $notes->where('incoming', 'like', '%' . $request['incoming'] . '%');
             $empty = false;
         }
