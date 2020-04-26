@@ -8,6 +8,7 @@ use App\Token;
 use App\Contract;
 use Validator;
 use File;
+use DateTime;
 
 class contractController extends Controller
 {
@@ -200,7 +201,9 @@ class contractController extends Controller
             $contracts = $contracts->where('company_id', $request['company_id']);
         if (isset($request['date_from']) && isset($request['date_to'])) {
 
-            $from = $request['date_from'];
+            $date = new DateTime($request['date_from']);
+            $date->modify('-1 day');
+            $from = $date->format('Y-m-d');
             $to = $request['date_to'];
 
             $contracts = $contracts->whereBetween('doc_date', [$from . '%', $to . '%']);

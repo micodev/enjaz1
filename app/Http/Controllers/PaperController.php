@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Str;
 use File;
+use DateTime;
 
 use Request as Req;
 
@@ -127,7 +128,9 @@ class paperController extends Controller
         }
         if (isset($request['date_from']) && isset($request['date_to'])) {
 
-            $from = $request['date_from'];
+            $date = new DateTime($request['date_from']);
+            $date->modify('-1 day');
+            $from = $date->format('Y-m-d');
             $to = $request['date_to'];
 
             $papers = $papers->whereBetween('doc_date', [$from . '%', $to . '%']);

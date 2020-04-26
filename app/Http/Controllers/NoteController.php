@@ -8,6 +8,7 @@ use App\Token;
 use App\Note;
 use Validator;
 use File;
+use DateTime;
 
 class noteController extends Controller
 {
@@ -214,10 +215,14 @@ class noteController extends Controller
 
         if (isset($request['date_from']) && isset($request['date_to'])) {
             $empty = false;
-            $from = $request['date_from'];
+            $date = new DateTime($request['date_from']);
+            $date->modify('-1 day');
+            $from = $date->format('Y-m-d');
+         
             $to = $request['date_to'];
-
+           
             $notes = $notes->whereBetween('doc_date', [$from . '%', $to . '%']);
+            return $notes;
         }
 
         if ($empty)
