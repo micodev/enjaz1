@@ -7,8 +7,6 @@ use Validator;
 use App\User;
 use App\Token;
 use App\Paper;
-use Illuminate\Support\Carbon;
-use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Str;
 use File;
 use DateTime;
@@ -44,14 +42,11 @@ class paperController extends Controller
         //  dd($request->image);
         $images = '';
         if (isset($request['images'])) {
+            if (!file_exists(public_path() . '/images/paper')) {
+                File::makeDirectory(public_path(). '/images/paper');
+            }
             $names = [];
             foreach ($request['images'] as $image) {
-
-
-                // $Path = public_path() . '/images/paper/';
-                // $filename = time() . $image->getClientOriginalName();
-                // $ex = $image->getClientOriginalExtension();
-                // $image->move($Path, $filename);
 
                 $image = explode(',', $image)[1];
        
@@ -206,17 +201,11 @@ class paperController extends Controller
             return response()->json([
                 'errors' => $validator->errors()
             ]);
-        //  dd($request->image);
-        $images = [];
-        if (isset($request['images'])) {
+        $paper = Paper::where('id', $request['id'])->first();
+        $new_images = [];
+        if ($request['temp'] != null) {
             $names = [];
-            foreach ($request['images'] as $image) {
-
-
-                // $Path = public_path() . '/images/paper/';
-                // $filename = time() . $image->getClientOriginalName();
-                // $ex = $image->getClientOriginalExtension();
-                // $image->move($Path, $filename);
+            foreach ($request['temp'] as $image) {
 
                 $image = explode(',', $image)[1];
        
@@ -233,9 +222,9 @@ class paperController extends Controller
 
                 array_push($names, '/images/paper/' . $filename);
             }
-            $images = $names;
+            $new_images = $names;
         }
-
+        $images = array_merge($paper->images, $new_images);
         $data = array(
             'title' => $request['title'],
             'doc_date' => $request['doc_date'],
@@ -246,7 +235,7 @@ class paperController extends Controller
 
         );
 
-        Paper::where('id', $request['id'])->update($data);
+       $paper->update($data);
         return response()->json([
             'response' => 'done'
         ]);

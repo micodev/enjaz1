@@ -9,6 +9,7 @@ use App\Contract;
 use Validator;
 use File;
 use DateTime;
+use Illuminate\Support\Str;
 
 class contractController extends Controller
 {
@@ -42,16 +43,11 @@ class contractController extends Controller
         //  dd($request->image);
         $images = '';
         if (isset($request['images'])) {
+            if (!file_exists(public_path() . '/images/contract')) {
+                File::makeDirectory(public_path(). '/images/contract');
+            }
             $names = [];
             foreach ($request['images'] as $image) {
-
-
-                // $Path = public_path() . '/images/contract/';
-                // $filename = time() . $image->getClientOriginalName();
-                // $ex = $image->getClientOriginalExtension();
-                // $image->move($Path, $filename);
-
-                // array_push($names, '/images/contract/' . $filename);
 
                 $image = explode(',', $image)[1];
        
@@ -59,10 +55,7 @@ class contractController extends Controller
                
                 $f = finfo_open();
                 $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
-                //return $mime_type;
                 $type = explode('/', $mime_type)[1];
-        
-                //  $image = str_replace(' ', '+', $image);
                 $filename = time() . Str::random(2) . '.' . $type;
                 File::put(public_path() . '/images/contract/' . $filename, $imgdata);
 
@@ -79,7 +72,7 @@ class contractController extends Controller
             'company_id' => $request['company'],
             'user_id' => $user->id,
             'images' => $images,
-            'state_id' => '4',
+            'state_id' => '3',
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action'],
@@ -109,36 +102,7 @@ class contractController extends Controller
             'response' => 'done'
         ]);
     }
-    // public function searchContract(Request $request)
-    // {
-    //     if (isset($request['title']))
-    //         $contracts = Contract::where('title', 'like', '%' . $request['title'] . '%');
-    //     if (isset($request['destination']))
-    //         $contracts = $contracts->where('destination', 'like', '%' . $request['destination'] . '%');
-    //     if (isset($request['action_id']))
-    //         $contracts = $contracts->where('action_id', $request['action_id']);
-    //     if (isset($request['type_id']))
-    //         $contracts = $contracts->where('type_id', $request['type_id']);
-    //     if (isset($request['company_id']))
-    //         $contracts = $contracts->where('company_id', $request['company_id']);
-    //     if (isset($request['from']) && isset($request['to'])) {
-    //         // $from =  Carbon::parse($request['from'])
-    //         //     ->startOfDay()        // 2018-09-29 00:00:00.000000
-    //         //     ->toDateTimeString(); // 2018-09-29 00:00:00;
-    //         // $to =  Carbon::parse($request['to'])
-    //         //     ->startOfDay()        // 2018-09-29 00:00:00.000000
-    //         //     ->toDateTimeString(); // 2018-09-29 00:00:00;
 
-    //         $from = $request['from'];
-    //         $to = $request['to'];
-
-    //         $contracts = $contracts->whereBetween('created_at', [$from . '%', $to . '%']);
-    //     }
-    //     $contracts = $contracts->paginate(1);
-    //     return response()->json([
-    //         'response' => $contracts
-    //     ]);
-    // }
     public function deleteImage(Request $request)
     {
         $request =json_decode($request->getContent(), true);
@@ -305,11 +269,11 @@ class contractController extends Controller
             return response()->json([
                 'errors' => $validator->errors()
             ]);
-        //  dd($request->image);
-        $images = [];
-        if (isset($request['images'])) {
+       $contract = Contract::where('id' , $request['id'])->first();
+        $new_images = [];
+        if ($request['temp'] != null) {
             $names = [];
-            foreach ($request['images'] as $image) {
+            foreach ($request['temp'] as $image) {
 
 
                 // $Path = public_path() . '/images/contract/';
@@ -334,9 +298,9 @@ class contractController extends Controller
 
                 array_push($names, '/images/contract/' . $filename);
             }
-            $images = $names;
+            $new_images = $names;
         }
-
+        $images = array_merge($contract->images, $new_images);
         $data = array(
             'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
@@ -353,7 +317,25 @@ class contractController extends Controller
 
         );
 
-        Contract::where('id', $request['id'])->update($data);
+        $contract->update($data);
+        return response()->json([
+            'response' => 'done'
+        ]);
+    }
+    public function waitContracts()
+    {
+        $contracts =Contract::with(['company', 'type', 'state', 'user', 'action'])->where('state_id', '3')
+        ->orderBy('created_at', 'desc')->paginate(5);
+        return response()->json([
+            'response' => $contracts
+        ]);
+    }
+    public function changeState(Request $request)
+    {
+        $request =json_decode($request->getContent(), true);
+        $contract = Contract::where('id' , $request['id'])->first();
+        $contract->state_id = $request['state_id'];
+        $contract->save();
         return response()->json([
             'response' => 'done'
         ]);

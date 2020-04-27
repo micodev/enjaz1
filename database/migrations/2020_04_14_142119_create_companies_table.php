@@ -14,16 +14,18 @@ class CreateCompaniesTable extends Migration
     public function up()
     {
         Schema::create('companies', function (Blueprint $table) {
-            $table->id();
+            $table->integer('id');
             $table->string('value');
             $table->timestamps();
         });
 
         DB::table('companies')->insert([
             [
+                'id' => '1',
                 'value' => 'Qcard'
             ],
             [
+                'id' => '2',
                 'value' => 'Injaz'
             ],
             

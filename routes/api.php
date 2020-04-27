@@ -25,7 +25,7 @@ Route::put('/update', 'PaperController@update');
 Route::post('/login/user', 'LoginController@userLogin');
 Route::post('/register/user', 'RegisterController@userRegister');
 
-Route::post('/test', 'TableController@test');
+Route::get('/test', 'TableController@test');
 
 Route::post('/add/paper', 'PaperController@create');
 Route::post('/add/book', 'BookController@create');
@@ -88,3 +88,11 @@ Route::get('/show/types', 'TableController@showTypes');
 Route::get('/show/roles', 'TableController@showRoles');
 Route::get('/show/actions', 'TableController@showActions');
 Route::get('/show/companies', 'TableController@showCompanies');
+
+
+// accepts
+Route::get('/state/books', 'BookController@waitBooks');
+Route::get('/state/contracts', 'ContractController@waitContracts');
+
+Route::post('/state/book', 'BookController@changeState');
+Route::post('/state/contract', 'BookController@changeState');

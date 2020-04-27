@@ -13,7 +13,11 @@ class Paper extends Model
     protected $casts = [
         'images' => 'array',
     ];
-    
+    protected $appends = ['temp'];
+    public function getTempAttribute()
+    {
+        return null;
+    }
     // protected $appends = ['company_id'];
     // protected $hidden = ['company_id'];
 

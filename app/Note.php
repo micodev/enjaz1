@@ -13,6 +13,11 @@ class Note extends Model
     protected $casts = [
         'images' => 'array',
     ];
+    protected $appends = ['temp'];
+    public function getTempAttribute()
+    {
+        return null;
+    }
 
     public function company()
     {

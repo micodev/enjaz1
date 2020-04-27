@@ -9,6 +9,7 @@ use App\Note;
 use Validator;
 use File;
 use DateTime;
+use Illuminate\Support\Str;
 
 class noteController extends Controller
 {
@@ -42,6 +43,9 @@ class noteController extends Controller
         //  dd($request->image);
         $images = [];
         if (isset($request['images'])) {
+            if (!file_exists(public_path() . '/images/note')) {
+                File::makeDirectory(public_path(). '/images/note');
+            }
             $names = [];
             foreach ($request['images'] as $image) {
 
@@ -256,11 +260,11 @@ class noteController extends Controller
             return response()->json([
                 'errors' => $validator->errors()
             ]);
-        //  dd($request->image);
-        $images = [];
-        if (isset($request['images'])) {
+        $note = Note::where('id', $request['id'])->first();
+        $new_images = [];
+        if ($request['temp'] != null) {
             $names = [];
-            foreach ($request['images'] as $image) {
+            foreach ($request['temp'] as $image) {
 
 
                 // $Path = public_path() . '/images/note/';
@@ -285,9 +289,9 @@ class noteController extends Controller
 
                 array_push($names, '/images/note/' . $filename);
             }
-            $images = $names;
+            $new_images = $names;
         }
-
+        $images = array_merge($note->images, $new_images);
         $data = array(
             'title' => $request['title'],
             'doc_date' => $request['doc_date'],
@@ -301,7 +305,7 @@ class noteController extends Controller
 
         );
 
-        Note::where('id', $request['id'])->update($data);
+        $note->update($data);
         return response()->json([
             'response' => 'done'
         ]);

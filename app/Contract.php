@@ -12,6 +12,11 @@ class Contract extends Model
         'user_id' ,'action_id'
        
     ];
+    protected $appends = ['temp'];
+    public function getTempAttribute()
+    {
+        return null;
+    }
 
     protected $casts = [
         'images' => 'array',

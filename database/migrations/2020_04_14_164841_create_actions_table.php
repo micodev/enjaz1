@@ -14,16 +14,18 @@ class CreateActionsTable extends Migration
     public function up()
     {
         Schema::create('actions', function (Blueprint $table) {
-            $table->id();
+            $table->integer('id');
             $table->string('value');
             $table->timestamps();
 
         });
         DB::table('actions')->insert([
             [
+                'id' => '1',
                 'value' => 'incoming'
             ],
             [
+                'id' => '2',
                 'value' => 'outcoming'
             ],
             

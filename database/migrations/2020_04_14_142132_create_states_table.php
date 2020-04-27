@@ -14,24 +14,24 @@ class CreateStatesTable extends Migration
     public function up()
     {
         Schema::create('states', function (Blueprint $table) {
-            $table->id();
+            $table->integer('id');
             $table->string('value');
             $table->timestamps();
         });
 
         DB::table('states')->insert([
             [
+                'id' => '1',
                 'value' => 'accept'
             ],
             [
+                'id' => '2',
                 'value' => 'reject'
             ],
             [
-                'value' => 'pending'
-            ],
-            [
+                'id' => '3',
                 'value' => 'wait'
-            ]
+            ],
         ]);
     }
 

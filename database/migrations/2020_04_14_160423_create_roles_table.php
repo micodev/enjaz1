@@ -14,19 +14,22 @@ class CreateRolesTable extends Migration
     public function up()
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->id();
+            $table->integer('id');
             $table->string('value');
             $table->timestamps();
         });
 
         DB::table('roles')->insert([
             [
+                'id' => '1',
                 'value' => 'admin'
             ],
             [
+                'id' => '2',
                 'value' => 'supervisor'
             ],
             [
+                'id' => '3',
                 'value' => 'official'
             ]
         ]);

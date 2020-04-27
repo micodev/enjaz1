@@ -8,7 +8,7 @@ class Type extends Model
 {
     //
     protected $fillable = [
-        'value', 'table'
+        'value', 'table', 'id'
     ];
     protected $hidden = ['created_at', 'updated_at'];
 
