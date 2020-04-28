@@ -264,17 +264,7 @@ class TableController extends Controller
 
     public function test(Request $request)
     {
-        if (!file_exists(public_path() . '/images/book')) {
-            File::makeDirectory(public_path(). '/images/book');
-        }
-
-        // File::makeDirectory(public_path(). "/tesst");
-        return "true";
-//         return Company::max('id') + 1;
-
-//         $date = new DateTime('2016-04-01');
-// $date->modify('-1 day');
-// return $date->format('Y-m-d');
+       
 
       
     }

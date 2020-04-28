@@ -50,24 +50,13 @@ class bookController extends Controller
             $names = [];
             foreach ($request['images'] as $image) {
 
-
-                // $Path = public_path() . '/images/book/';
-                // $filename = time() . $image->getClientOriginalName();
-                // $ex = $image->getClientOriginalExtension();
-                // $image->move($Path, $filename);
-
-                // array_push($names, '/images/book/' . $filename);
-
                 $image = explode(',', $image)[1];
 
                 $imgdata = base64_decode($image);
 
                 $f = finfo_open();
                 $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
-                //return $mime_type;
                 $type = explode('/', $mime_type)[1];
-
-                //  $image = str_replace(' ', '+', $image);
                 $filename = time() . Str::random(2) . '.' . $type;
                 File::put(public_path() . '/images/book/' . $filename, $imgdata);
 
@@ -126,7 +115,6 @@ class bookController extends Controller
         $book = Book::where('id', $id)->first();
         $images = $book->images;
 
-        // $path = "/images/book/15870461461adad54ddb6b9b9008426595297b0329.jpg";
         $images =   array_diff($images, [$path]);
         $book->images = $images;
         $book->save();
@@ -138,33 +126,7 @@ class bookController extends Controller
         ]);
     }
 
-    public function searchBook(Request $request) // for mobile
-    {
-        $books = Book::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc');
-        if (isset($request['title']))
-            $books = $books->where('title', 'like', '%' . $request['title'] . '%');
-        if (isset($request['destination']))
-            $books = $books->where('destination', 'like', '%' . $request['destination'] . '%');
-        if (isset($request['action_id']))
-            $books = $books->where('action_id', $request['action_id']);
-        if (isset($request['type_id']))
-            $books = $books->where('type_id', $request['type_id']);
-        if (isset($request['company_id']))
-            $books = $books->where('company_id', $request['company_id']);
-        if (isset($request['date_from']) && isset($request['date_to'])) {
-
-            $date = new DateTime($request['date_from']);
-            $date->modify('-1 day');
-            $from = $date->format('Y-m-d');
-            $to = $request['date_to'];
-
-            $books = $books->whereBetween('doc_date', [$from . '%', $to . '%']);
-        }
-        $books = $books->paginate(1);
-        return response()->json([
-            'response' => $books
-        ]);
-    }
+   
 
     public function search(Request $request)
     {
@@ -210,7 +172,9 @@ class bookController extends Controller
 
         if (isset($request['date_from']) && isset($request['date_to'])) {
             $empty = false;
-            $from = $request['date_from'];
+            $date = new DateTime($request['date_from']);
+            $date->modify('-1 day');
+            $from = $date->format('Y-m-d');
             $to = $request['date_to'];
 
             $books = $books->whereBetween('doc_date', [$from . '%', $to . '%']);
@@ -243,7 +207,6 @@ class bookController extends Controller
             'title' => 'required',
 
         ]);
-        //  return $request;
         if ($validator->fails())
             return response()->json([
                 'errors' => $validator->errors()
@@ -283,7 +246,6 @@ class bookController extends Controller
 
         );
 
-        // Book::where('id', $request['id'])->update($data);
         $book->update($data);
         return response()->json([
             'response' => 'done'

@@ -21,8 +21,8 @@ class contractController extends Controller
     public function create(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-       // $user = User::where('id', '1')->first();
-       $request =json_decode($request->getContent(), true);
+        // $user = User::where('id', '1')->first();
+        $request = json_decode($request->getContent(), true);
 
 
         $validator = Validator::make($request, [
@@ -40,19 +40,19 @@ class contractController extends Controller
             return response()->json([
                 'errors' => $validator->errors()
             ]);
-        //  dd($request->image);
+        
         $images = '';
         if (isset($request['images'])) {
             if (!file_exists(public_path() . '/images/contract')) {
-                File::makeDirectory(public_path(). '/images/contract');
+                File::makeDirectory(public_path() . '/images/contract');
             }
             $names = [];
             foreach ($request['images'] as $image) {
 
                 $image = explode(',', $image)[1];
-       
+
                 $imgdata = base64_decode($image);
-               
+
                 $f = finfo_open();
                 $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
                 $type = explode('/', $mime_type)[1];
@@ -63,9 +63,8 @@ class contractController extends Controller
             }
             $images = $names;
         }
-        // return $images;
 
-        $b =  Contract::create([
+        Contract::create([
             'type_id' => $request['type'],
             'doc_date' => $request['doc_date'],
             'note' => $request['note'],
@@ -79,14 +78,14 @@ class contractController extends Controller
             'title' => $request['title']
 
         ]);
-       // return $b->images;
+
         return response()->json([
             'response' => 'done'
         ]);
     }
     public function showContracts()
     {
-        $contracts =Contract::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc')->paginate(5);
+        $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc')->paginate(5);
         return response()->json([
             'response' => $contracts
         ]);
@@ -94,7 +93,7 @@ class contractController extends Controller
 
     public function delete(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true);
 
         $id = $request['id'];
         $contract = Contract::where('id', $id)->first()->delete();
@@ -105,7 +104,7 @@ class contractController extends Controller
 
     public function deleteImage(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true);
 
         $id = $request['contract_id'];
 
@@ -124,32 +123,6 @@ class contractController extends Controller
         ]);
     }
 
-    // public function search(Request $request)
-    // {
-    //     $title = $request['title'];
-    //     $company_id = $request['company_id'];
-    //     $state_id = $request['state_id'];
-    //     $type_id = $request['type_id'];
-    //     $doc_number = $request['doc_number'];
-    //     $action_id = $request['action_id'];
-    //     //check for user
-    //     $contracts = Contract::where('company_id', $company_id);
-    //     if ($title != null)
-    //         $contracts = $contracts->where('title','like', '%'. $title .'%');
-
-    //     if (isset($request['from']) && isset($request['to'])) {
-
-    //         $from = $request['from'];
-    //         $to = $request['to'];
-
-    //         $contracts = $contracts->whereBetween('created_at', [$from . '%', $to . '%']);
-    //     }
-    //     $contracts = $contracts->paginate(1);
-
-    //     return response()->json([
-    //         'response' => $contracts
-    //     ]);
-    // }
     public function searchContract(Request $request)
     {
         $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc');
@@ -180,15 +153,7 @@ class contractController extends Controller
 
     public function search(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
-
-        // $title = $request['title'];
-        // $destination = $request['destination'];
-        // $doc_number = $request['doc_number'];
-        // $type = $request['type_id'];
-        // $state = $request['state_id'];
-        // $company_id = $request['company_id'];
-        // $action = $request['action_id'];
+        $request = json_decode($request->getContent(), true);
         $empty = true;
 
         $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc');
@@ -249,9 +214,9 @@ class contractController extends Controller
     }
     public function update(Request $request)
     {
-          $user = $this->getUser($request->bearerToken());
-       // $user = User::where('id', '1')->first();
-        $request =json_decode($request->getContent(), true);
+        $user = $this->getUser($request->bearerToken());
+        // $user = User::where('id', '1')->first();
+        $request = json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [
             'type_id' => 'required',
@@ -264,35 +229,24 @@ class contractController extends Controller
             'title' => 'required',
 
         ]);
-        //  return $request;
+
         if ($validator->fails())
             return response()->json([
                 'errors' => $validator->errors()
             ]);
-       $contract = Contract::where('id' , $request['id'])->first();
+        $contract = Contract::where('id', $request['id'])->first();
         $new_images = [];
         if ($request['temp'] != null) {
             $names = [];
             foreach ($request['temp'] as $image) {
 
-
-                // $Path = public_path() . '/images/contract/';
-                // $filename = time() . $image->getClientOriginalName();
-                // $ex = $image->getClientOriginalExtension();
-                // $image->move($Path, $filename);
-
-                // array_push($names, '/images/contract/' . $filename);
-
                 $image = explode(',', $image)[1];
-       
+
                 $imgdata = base64_decode($image);
-               
+
                 $f = finfo_open();
                 $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
-                //return $mime_type;
                 $type = explode('/', $mime_type)[1];
-        
-                //  $image = str_replace(' ', '+', $image);
                 $filename = time() . Str::random(2) . '.' . $type;
                 File::put(public_path() . '/images/contract/' . $filename, $imgdata);
 
@@ -324,16 +278,16 @@ class contractController extends Controller
     }
     public function waitContracts()
     {
-        $contracts =Contract::with(['company', 'type', 'state', 'user', 'action'])->where('state_id', '3')
-        ->orderBy('created_at', 'desc')->paginate(5);
+        $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->where('state_id', '3')
+            ->orderBy('created_at', 'desc')->paginate(5);
         return response()->json([
             'response' => $contracts
         ]);
     }
     public function changeState(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
-        $contract = Contract::where('id' , $request['id'])->first();
+        $request = json_decode($request->getContent(), true);
+        $contract = Contract::where('id', $request['id'])->first();
         $contract->state_id = $request['state_id'];
         $contract->save();
         return response()->json([

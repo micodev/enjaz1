@@ -213,10 +213,7 @@ class paperController extends Controller
                
                 $f = finfo_open();
                 $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
-                //return $mime_type;
                 $type = explode('/', $mime_type)[1];
-        
-                //  $image = str_replace(' ', '+', $image);
                 $filename = time() . Str::random(2) . '.' . $type;
                 File::put(public_path() . '/images/paper/' . $filename, $imgdata);
 
@@ -242,23 +239,3 @@ class paperController extends Controller
     }
 }
 
-
-  // $from    = Carbon::parse('2020-02-21')
-        //     ->startOfDay()        // 2018-09-29 00:00:00.000000
-        //     ->toDateTimeString(); // 2018-09-29 00:00:00
-        // //  BookingDates::where('email', Input::get('email'))
-        // //  ->orWhere('name', 'like', '%' . Input::get('name') . '%')->get();
-        // return $from;
-        // //         $from    = Carbon::parse($request->from)
-        // //                  ->startOfDay()        // 2018-09-29 00:00:00.000000
-        // //                  ->toDateTimeString(); // 2018-09-29 00:00:00
-
-        // // $to      = Carbon::parse($request->to)
-        // //                  ->endOfDay()          // 2018-09-29 23:59:59.000000
-        // //                  ->toDateTimeString(); // 2018-09-29 23:59:59
-
-        // // $models  = Model::whereBetween('created_at', [$from, $to])->get();
-
-        // //     }
-
-        // //use Illuminate\Support\Carbon;

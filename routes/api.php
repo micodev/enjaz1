@@ -95,4 +95,4 @@ Route::get('/state/books', 'BookController@waitBooks');
 Route::get('/state/contracts', 'ContractController@waitContracts');
 
 Route::post('/state/book', 'BookController@changeState');
-Route::post('/state/contract', 'BookController@changeState');
+Route::post('/state/contract', 'ContractController@changeState');
