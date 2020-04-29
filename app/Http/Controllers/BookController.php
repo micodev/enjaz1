@@ -15,12 +15,12 @@ class bookController extends Controller
 {
     private function getUser($token)
     {
-        $id = Token::where('api_token', $token)->first()->user_id;
-        return User::where('id', $id)->first();
+        return Token::where('api_token', $token)->first()->user()->first();
     }
     public function create(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
+       
         //  $user = User::where('id', '1')->first();
         $request = json_decode($request->getContent(), true);
 
@@ -248,7 +248,7 @@ class bookController extends Controller
 
         $book->update($data);
         return response()->json([
-            'response' => 'done'
+            'response' =>  $book
         ]);
     }
 

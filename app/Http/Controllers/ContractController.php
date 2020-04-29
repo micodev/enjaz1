@@ -15,8 +15,7 @@ class contractController extends Controller
 {
     private function getUser($token)
     {
-        $id = Token::where('api_token', $token)->first()->user_id;
-        return User::where('id', $id)->first();
+        return Token::where('api_token', $token)->first()->user()->first();
     }
     public function create(Request $request)
     {
@@ -249,7 +248,7 @@ class contractController extends Controller
 
         $contract->update($data);
         return response()->json([
-            'response' => 'done'
+            'response' => $contract
         ]);
     }
     public function waitContracts()

@@ -12,6 +12,7 @@ use App\Company;
 use File;
 use DateTime;
 use Storage;
+use App\Token;
 
 class TableController extends Controller
 {
@@ -264,7 +265,8 @@ class TableController extends Controller
 
     public function test(Request $request)
     {
-       
+       $user = Token::where('api_token',  $request->bearerToken())->first()->user()->first();
+        return $user->name;
 
       
     }

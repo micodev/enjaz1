@@ -18,8 +18,7 @@ class paperController extends Controller
 
     private function getUser($token)
     {
-        $id = Token::where('api_token', $token)->first()->user_id;
-        return User::where('id', $id)->first();
+        return Token::where('api_token', $token)->first()->user()->first();
     }
     public function create(Request $request)
     {
@@ -213,7 +212,7 @@ class paperController extends Controller
 
        $paper->update($data);
         return response()->json([
-            'response' => 'done'
+            'response' =>  $paper
         ]);
     }
 }
