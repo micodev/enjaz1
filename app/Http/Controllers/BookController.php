@@ -184,7 +184,7 @@ class bookController extends Controller
             return response()->json([
                 'response' => 'Bad Request'
             ]);
-        $books = $books->paginate(1);
+        $books = $books->paginate(5);
         return response()->json([
             'response' => $books
         ]);

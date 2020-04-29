@@ -105,10 +105,6 @@ class paperController extends Controller
     {
         $request =json_decode($request->getContent(), true);
 
-
-        // $title = $request['title'];
-      
-        // $company_id = $request['company_id'];
         $papers = Paper::with(['company', 'user'])->orderBy('created_at', 'desc');
         $empty = true;
         if (isset($request['company_id'])){
@@ -143,24 +139,7 @@ class paperController extends Controller
         ]);
     }
 
-    public function searchPaper(Request $request)
-    {
-        $request = $request->json()->all();
-
-        $papers = Paper::with(['company', 'user'])->orderBy('created_at', 'desc');
-        if (isset($request['title']))
-            $papers = $papers->where('title', 'like', '%' . $request['title'] . '%');
-        if (isset($request['date_from']) && isset($request['date_to'])) {
-            $from = $request['date_from'];
-            $to = $request['date_to'];
-            $papers = $papers->whereBetween('doc_date', [$from . '%', $to . '%']);
-        }
-
-        $papers = $papers->paginate(1);
-        return response()->json([
-            'response' => $papers
-        ]);
-    }
+   
 
     public function deleteImage(Request $request)
     {

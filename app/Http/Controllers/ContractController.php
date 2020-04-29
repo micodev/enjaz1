@@ -123,33 +123,7 @@ class contractController extends Controller
         ]);
     }
 
-    public function searchContract(Request $request)
-    {
-        $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc');
-        if (isset($request['title']))
-            $contracts = $contracts->where('title', 'like', '%' . $request['title'] . '%');
-        if (isset($request['destination']))
-            $contracts = $contracts->where('destination', 'like', '%' . $request['destination'] . '%');
-        if (isset($request['action_id']))
-            $contracts = $contracts->where('action_id', $request['action_id']);
-        if (isset($request['type_id']))
-            $contracts = $contracts->where('type_id', $request['type_id']);
-        if (isset($request['company_id']))
-            $contracts = $contracts->where('company_id', $request['company_id']);
-        if (isset($request['date_from']) && isset($request['date_to'])) {
-
-            $date = new DateTime($request['date_from']);
-            $date->modify('-1 day');
-            $from = $date->format('Y-m-d');
-            $to = $request['date_to'];
-
-            $contracts = $contracts->whereBetween('doc_date', [$from . '%', $to . '%']);
-        }
-        $contracts = $contracts->paginate(1);
-        return response()->json([
-            'response' => $contracts
-        ]);
-    }
+  
 
     public function search(Request $request)
     {
@@ -197,7 +171,9 @@ class contractController extends Controller
         if (isset($request['date_from']) && isset($request['date_to'])) {
             $empty = false;
 
-            $from = $request['date_from'];
+            $date = new DateTime($request['date_from']);
+            $date->modify('-1 day');
+            $from = $date->format('Y-m-d');
             $to = $request['date_to'];
 
             $contracts = $contracts->whereBetween('doc_date', [$from . '%', $to . '%']);
@@ -207,7 +183,7 @@ class contractController extends Controller
             return response()->json([
                 'response' => 'Bad Request'
             ]);
-        $contracts = $contracts->paginate(1);
+        $contracts = $contracts->paginate(5);
         return response()->json([
             'response' => $contracts
         ]);

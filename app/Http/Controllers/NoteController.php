@@ -133,7 +133,9 @@ class noteController extends Controller
     {
         $request = json_decode($request->getContent(), true);
         $empty = true;
+       
         $notes = Note::with(['company', 'user'])->orderBy('created_at', 'desc');
+       
         if (isset($request['company_id'])) {
             $notes = $notes->where('company_id', $request['company_id']);
             $empty = false;
@@ -160,17 +162,17 @@ class noteController extends Controller
             $date = new DateTime($request['date_from']);
             $date->modify('-1 day');
             $from = $date->format('Y-m-d');
-
             $to = $request['date_to'];
-
             $notes = $notes->whereBetween('doc_date', [$from . '%', $to . '%']);
-            return $notes;
+           
         }
 
         if ($empty)
             return response()->json([
                 'response' => 'Bad Request'
             ]);
+           
+       
         $notes = $notes->paginate(5);
         return response()->json([
             'response' => $notes
