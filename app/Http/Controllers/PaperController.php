@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 use File;
 use DateTime;
 
-use Request as Req;
+
 
 class paperController extends Controller
 {
