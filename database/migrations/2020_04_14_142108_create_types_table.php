@@ -22,27 +22,27 @@ class CreateTypesTable extends Migration
 
         DB::table('types')->insert([
             [
-                'id' => '1',
+                'id' => 1,
                 'value' => 'عقود مديريات',
                 'table' => '0'
             ],
             [
-                'id' => '2',
+                'id' => 2,
                 'value' => 'عقود شركات',
                 'table' => '0'
             ],
             [
-                'id' => '3',
+                'id' => 3,
                 'value' => 'سري \ شخصي',
                 'table' => '1'
             ],
             [
-                'id' => '4',
+                'id' => 4,
                 'value' => 'كتاب عام',
                 'table' => '1'
             ],
             [
-                'id' => '5',
+                'id' => 5,
                 'value' => 'عروض خدمات',
                 'table' => '1'
             ]

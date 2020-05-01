@@ -29,8 +29,8 @@ class CreateUsersTable extends Migration
                 'name' => 'admin',
                 'username' => 'admin',
                 'password' => Hash::make('123'),
-                'role_id' => '1',
-                'company_id' => '1'
+                'role_id' => 1,
+                'company_id' => 1
             ]
         ]);
     }

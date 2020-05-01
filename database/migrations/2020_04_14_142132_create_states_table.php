@@ -21,15 +21,15 @@ class CreateStatesTable extends Migration
 
         DB::table('states')->insert([
             [
-                'id' => '1',
+                'id' => 1,
                 'value' => 'accept'
             ],
             [
-                'id' => '2',
+                'id' => 2,
                 'value' => 'reject'
             ],
             [
-                'id' => '3',
+                'id' => 3,
                 'value' => 'wait'
             ],
         ]);

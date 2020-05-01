@@ -21,11 +21,11 @@ class CreateActionsTable extends Migration
         });
         DB::table('actions')->insert([
             [
-                'id' => '1',
+                'id' => 1,
                 'value' => 'incoming'
             ],
             [
-                'id' => '2',
+                'id' => 2,
                 'value' => 'outcoming'
             ],
             
