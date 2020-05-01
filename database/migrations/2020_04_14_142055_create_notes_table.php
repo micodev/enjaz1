@@ -22,7 +22,7 @@ class CreateNotesTable extends Migration
             $table->string('outcoming');
             $table->string('note');
             $table->integer('company_id');
-            $table->string('images');
+            $table->longText('images');
             $table->integer('user_id');
             $table->timestamps();
         });

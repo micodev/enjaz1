@@ -13,6 +13,7 @@ use File;
 use DateTime;
 use Storage;
 use App\Token;
+use ImageOptimizer;
 
 class TableController extends Controller
 {
@@ -265,9 +266,13 @@ class TableController extends Controller
 
     public function test(Request $request)
     {
-       $user = Token::where('api_token',  $request->bearerToken())->first()->user()->first();
-        return $user->name;
-
+        $img =[];
+        return $img;
+        $pathToImage = public_path(). "/images/paper/5.jpg";
+        $te =public_path(). "/images/note/1.jpeg";
+      
+          ImageOptimizer::optimize($pathToImage, $te);
+        return "true";
       
     }
 }

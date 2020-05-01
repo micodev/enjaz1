@@ -25,13 +25,14 @@ class contractController extends Controller
 
 
         $validator = Validator::make($request, [
-            'type' => 'required',
+            'type_id' => 'required',
             'doc_date' => 'required',
             'note' => 'required',
-            'company' => 'required',
+            'company_id' => 'required',
             'doc_number' => 'required',
+            // 'doc_number' => 'required | unique:contracts',
             'destination' => 'required',
-            'action' => 'required',
+            'action_id' => 'required',
             'title' => 'required',
         ]);
 
@@ -40,7 +41,7 @@ class contractController extends Controller
                 'errors' => $validator->errors()
             ]);
         
-        $images = '';
+        $images = [];
         if (isset($request['images'])) {
             if (!file_exists(public_path() . '/images/contract')) {
                 File::makeDirectory(public_path() . '/images/contract');
@@ -64,16 +65,16 @@ class contractController extends Controller
         }
 
         Contract::create([
-            'type_id' => $request['type'],
+            'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
             'note' => $request['note'],
-            'company_id' => $request['company'],
+            'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'images' => $images,
             'state_id' => '3',
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
-            'action_id' => $request['action'],
+            'action_id' => $request['action_id'],
             'title' => $request['title']
 
         ]);

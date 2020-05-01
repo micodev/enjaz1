@@ -30,6 +30,7 @@ class noteController extends Controller
             'note' => 'required',
             'company_id' => 'required',
             'doc_number' => 'required',
+            // 'doc_number' => 'required | unique:notes',
             'outcoming' => 'required',
             'incoming' => 'required',
             'title' => 'required',

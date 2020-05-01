@@ -30,6 +30,7 @@ class bookController extends Controller
             'note' => 'required',
             'company_id' => 'required',
             'doc_number' => 'required',
+           // 'doc_number' => 'required | unique:books',
             'destination' => 'required',
             'action_id' => 'required',
             'title' => 'required',
@@ -42,7 +43,7 @@ class bookController extends Controller
             ]);
 
 
-        $images = '';
+        $images = [];
         if (isset($request['images'])) {
             if (!file_exists(public_path() . '/images/book')) {
                 File::makeDirectory(public_path() . '/images/book');

@@ -19,7 +19,7 @@ class CreatePapersTable extends Migration
             $table->string('doc_date');
             $table->string('note');
             $table->integer('company_id');
-            $table->string('images')->nullable();
+            $table->longText('images')->nullable();
             $table->integer('user_id');
             $table->timestamps();
         });

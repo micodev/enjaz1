@@ -39,7 +39,7 @@ class paperController extends Controller
                 'errors' => $validator->errors()
             ]);
         //  dd($request->image);
-        $images = '';
+        $images = [];
         if (isset($request['images'])) {
             if (!file_exists(public_path() . '/images/paper')) {
                 File::makeDirectory(public_path(). '/images/paper');
