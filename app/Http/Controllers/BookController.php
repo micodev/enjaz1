@@ -206,6 +206,7 @@ class bookController extends Controller
             'destination' => 'required',
             'action_id' => 'required | integer',
             'title' => 'required',
+            'state_id' => 'required | integer'
 
         ]);
         if ($validator->fails())
@@ -242,7 +243,8 @@ class bookController extends Controller
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
-            'title' => $request['title']
+            'title' => $request['title'],
+            'state_id' => $request['state_id']
 
 
         );

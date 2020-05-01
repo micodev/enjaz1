@@ -204,6 +204,7 @@ class contractController extends Controller
             'destination' => 'required',
             'action_id' => 'required | integer',
             'title' => 'required',
+            'state_id' => 'required | integer'
 
         ]);
 
@@ -239,7 +240,7 @@ class contractController extends Controller
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'images' => $images,
-            'state_id' => '1',
+            'state_id' => $request['state_id'],
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
