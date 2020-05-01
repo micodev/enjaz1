@@ -25,14 +25,14 @@ class contractController extends Controller
 
 
         $validator = Validator::make($request, [
-            'type_id' => 'required',
+            'type_id' => 'required | integer',
             'doc_date' => 'required',
             'note' => 'required',
-            'company_id' => 'required',
+            'company_id' => 'required | integer',
             'doc_number' => 'required',
             // 'doc_number' => 'required | unique:contracts',
             'destination' => 'required',
-            'action_id' => 'required',
+            'action_id' => 'required | integer',
             'title' => 'required',
         ]);
 
@@ -71,7 +71,7 @@ class contractController extends Controller
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'images' => $images,
-            'state_id' => '3',
+            'state_id' => 3,
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
@@ -195,13 +195,14 @@ class contractController extends Controller
         $request = json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [
-            'type_id' => 'required',
+            'id' => 'required',
+            'type_id' => 'required | integer',
             'doc_date' => 'required',
             'note' => 'required',
-            'company_id' => 'required',
+            'company_id' => 'required | integer',
             'doc_number' => 'required',
             'destination' => 'required',
-            'action_id' => 'required',
+            'action_id' => 'required | integer',
             'title' => 'required',
 
         ]);

@@ -25,14 +25,14 @@ class bookController extends Controller
         $request = json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [
-            'type_id' => 'required',
+            'type_id' => 'required| integer',
             'doc_date' => 'required',
             'note' => 'required',
-            'company_id' => 'required',
+            'company_id' => 'required| integer',
             'doc_number' => 'required',
            // 'doc_number' => 'required | unique:books',
             'destination' => 'required',
-            'action_id' => 'required',
+            'action_id' => 'required| integer',
             'title' => 'required',
 
         ]);
@@ -73,7 +73,7 @@ class bookController extends Controller
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'images' => $images,
-            'state_id' => '3', //if u need default
+            'state_id' => 3, //if u need default
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
@@ -198,13 +198,13 @@ class bookController extends Controller
         $request = json_decode($request->getContent(), true);
 
         $validator = Validator::make($request, [
-            'type_id' => 'required',
+            'type_id' => 'required | integer',
             'doc_date' => 'required',
             'note' => 'required',
-            'company_id' => 'required',
+            'company_id' => 'required | integer',
             'doc_number' => 'required',
             'destination' => 'required',
-            'action_id' => 'required',
+            'action_id' => 'required | integer',
             'title' => 'required',
 
         ]);

@@ -266,7 +266,7 @@ class TableController extends Controller
 
     public function test(Request $request)
     {
-        $img =[];
+        $img =array();
         return $img;
         $pathToImage = public_path(). "/images/paper/5.jpg";
         $te =public_path(). "/images/note/1.jpeg";

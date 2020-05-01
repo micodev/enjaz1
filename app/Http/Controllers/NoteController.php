@@ -28,8 +28,8 @@ class noteController extends Controller
 
             'doc_date' => 'required',
             'note' => 'required',
-            'company_id' => 'required',
-            'doc_number' => 'required',
+            'company_id' => 'required | integer',
+            'doc_number' => 'required | integer',
             // 'doc_number' => 'required | unique:notes',
             'outcoming' => 'required',
             'incoming' => 'required',
@@ -193,7 +193,7 @@ class noteController extends Controller
             'note' => 'required',
             'incoming' => 'required',
             'outcoming' => 'required',
-            'company_id' => 'required'
+            'company_id' => 'required | integer'
         ]);
         //  return $request;
         if ($validator->fails())

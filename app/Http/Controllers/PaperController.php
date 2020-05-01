@@ -31,7 +31,7 @@ class paperController extends Controller
             'title' => 'required',
             'doc_date' => 'required',
             'note' => 'required',
-            'company_id' => 'required'
+            'company_id' => 'required | integer'
         ]);
         //  return $request;
         if ($validator->fails())
@@ -172,7 +172,7 @@ class paperController extends Controller
             'title' => 'required',
             'doc_date' => 'required',
             'note' => 'required',
-            'company_id' => 'required'
+            'company_id' => 'required | integer'
         ]);
         //  return $request;
         if ($validator->fails())
