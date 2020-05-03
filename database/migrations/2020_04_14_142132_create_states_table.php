@@ -22,15 +22,15 @@ class CreateStatesTable extends Migration
         DB::table('states')->insert([
             [
                 'id' => 1,
-                'value' => 'accept'
+                'value' => 'مقبول'
             ],
             [
                 'id' => 2,
-                'value' => 'reject'
+                'value' => 'مرفوض'
             ],
             [
                 'id' => 3,
-                'value' => 'wait'
+                'value' => 'بأنتظار الموافقة'
             ],
         ]);
     }
