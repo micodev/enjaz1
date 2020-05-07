@@ -1,0 +1,163 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Validator;
+use App\User;
+use Illuminate\Support\Facades\Auth;
+use App\Token;
+use Illuminate\Support\Str;
+
+
+
+
+class UserController extends Controller
+{
+    
+    public function login(Request $request)
+    {
+        $request = json_decode($request->getContent(), true);
+
+        $validator = Validator::make($request, [
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
+
+        if (Auth::attempt(['username' => $request['username'], 'password' => $request['password']])) {
+
+            $user = User::where('username', $request['username'])->with(['role', 'company'])->first();
+            if ($user->active) {
+                $token = Token::create([
+                    'api_token' => Str::random(50),
+                    'user_id' => $user->id,
+                ]);
+                return response()->json([
+                    'response' => [
+                        'user' => $user,
+                        'token' => $token->api_token
+                    ]
+                ]);
+            } else
+                return response()->json([
+                    'response' => 'Deactive'
+                ]);
+        } else  return response()->json([
+            'response' => 'unauthorized'
+        ]);
+    }
+
+    public function register(Request $request)
+    {
+        $request = json_decode($request->getContent(), true);
+
+        $validator = Validator::make($request, [
+            'name' => 'required',
+            'username' => 'required | unique:users',
+            'password' => 'required | min:6',
+            'role_id' => 'required',
+            'company_id' => 'required'
+        ]);
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
+
+        User::create([
+            'name' => $request['name'],
+            'username' => $request['username'],
+            'password' => Hash::make($request['password']),
+            'role_id' => $request['role_id'],
+            'company_id' => $request['company_id'],
+        ]);
+
+        return response()->json([
+            'response' => 'done'
+        ]);
+    }
+
+    public function delete(Request $request)
+    {
+        $request = json_decode($request->getContent(), true);
+        $user = User::where('id', $request['id'])->first()->delete();
+        if ($user)
+            return response()->json([
+                'response' => 'done'
+            ]);
+        else
+            return response()->json([
+                'response' => 'Not Done'
+            ]);
+    }
+    public function update(Request $request)
+    {
+        $request = json_decode($request->getContent(), true);
+        $validator = Validator::make($request, [
+            'name' => 'required',
+            'username' => 'required | unique:users,username,' . $request['id'],
+            'new_password' => ' min:6',
+            'role_id' => 'required',
+            'company_id' => 'required'
+        ]);
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
+
+        $user = User::where('id', $request['id'])->first()->update($request);
+        if ($user)
+            return response()->json([
+                'response' => 'done'
+            ]);
+        else
+            return response()->json([
+                'response' => 'Not Done'
+            ]);
+    }
+    public function show()
+    {
+
+        $users =  User::with(['company', 'role'])->orderBy('created_at', 'desc')->paginate(20);
+
+        return response()->json([
+            'response' => $users
+        ]);
+    }
+    public function search(Request $request)
+    {
+        $request = json_decode($request->getContent(), true);
+        $empty = true;
+        $users = User::with(['company', 'role'])->orderBy('created_at', 'desc');
+        if ($request['username'] != null) {
+            $users = $users->where('username', $request['username']);
+            $empty = false;
+        }
+        if ($request['name'] != null) {
+            $users = $users->where('name', 'like', '%' . $request['name'] . '%');
+            $empty = false;
+        }
+        if ($request['role_id'] != null) {
+            $users = $users->where('role_id', $request['role_id']);
+            $empty = false;
+        }
+        if ($request['company_id'] != null) {
+            $users = $users->where('company_id', $request['company_id']);
+            $empty = false;
+        }
+        if ($empty)
+            return response()->json([
+                'response' => 'Bad Request'
+            ]);
+        $users = $users->paginate(20);
+        return response()->json([
+            'response' => $users
+        ]);
+    }
+    
+}

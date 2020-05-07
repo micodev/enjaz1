@@ -24,8 +24,15 @@ Route::middleware(['cors'])->group(function () {
     Route::post('/search', 'PaperController@search');
     Route::put('/update', 'PaperController@update');
 
-    Route::post('/login/user', 'LoginController@userLogin');
-    Route::post('/register/user', 'RegisterController@userRegister');
+    // below 6 routes about user
+    Route::post('/login/user', 'UserController@login');
+    Route::post('/register/user', 'UserController@register');
+    Route::post('/delete/user', 'UserController@delete');
+    Route::post('/update/user', 'UserController@update');
+    Route::get('/show/users', 'UserController@show');
+    Route::post('/search/users', 'UserController@search');
+    
+
 
     Route::get('/test', 'TableController@test');
 
@@ -33,6 +40,9 @@ Route::middleware(['cors'])->group(function () {
     Route::post('/add/book', 'BookController@create');
     Route::post('/add/note', 'NoteController@create');
     Route::post('/add/contract', 'ContractController@create');
+
+    Route::post('/create/book', 'BookController@createBook');
+    Route::post('/create/contract', 'ContractController@createContract');
 
     Route::post('/delete/paper', 'PaperController@delete');
     Route::post('/delete/book', 'BookController@delete');
@@ -54,12 +64,7 @@ Route::middleware(['cors'])->group(function () {
     Route::post('/search/notes', 'NoteController@search');
     Route::post('/search/contracts', 'ContractController@search');
 
-    //use below 4 routes with mobile if above not works
-    Route::post('/search/mobile/papers', 'PaperController@search');
-    Route::post('/search/mobile/books', 'BookController@search');
-    Route::post('/search/mobiel/notes', 'NoteController@search');
-    Route::post('/search/mobile/contracts', 'ContractController@search');
-    // end form mobile
+
     Route::put('/update/paper', 'PaperController@update');
     Route::put('/update/book', 'BookController@update');
     Route::put('/update/note', 'NoteController@update');
@@ -98,4 +103,13 @@ Route::middleware(['cors'])->group(function () {
 
     Route::post('/state/book', 'BookController@changeState');
     Route::post('/state/contract', 'ContractController@changeState');
+
+    Route::post('/change/book', 'BookController@setState');
+    Route::post('/change/contract', 'ContractController@setState');
+
+    // below part one of project
+
+
 });
+Route::get('/show/counts', 'TableController@showCounts');
+Route::get('/show/notify', 'TableController@showNotify');

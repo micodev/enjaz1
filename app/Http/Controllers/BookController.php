@@ -10,6 +10,7 @@ use Validator;
 use File;
 use DateTime;
 use Illuminate\Support\Str;
+use App\Notify;
 
 class bookController extends Controller
 {
@@ -20,7 +21,7 @@ class bookController extends Controller
     public function create(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-       
+
         //  $user = User::where('id', '1')->first();
         $request = json_decode($request->getContent(), true);
 
@@ -30,7 +31,7 @@ class bookController extends Controller
             'note' => 'required',
             'company_id' => 'required| integer',
             'doc_number' => 'required',
-           // 'doc_number' => 'required | unique:books',
+            // 'doc_number' => 'required | unique:books',
             'destination' => 'required',
             'action_id' => 'required| integer',
             'title' => 'required',
@@ -66,7 +67,7 @@ class bookController extends Controller
             $images = $names;
         }
 
-        $b =  Book::create([
+        $book =  Book::create([
             'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
             'note' => $request['note'],
@@ -80,6 +81,77 @@ class bookController extends Controller
             'title' => $request['title']
 
         ]);
+
+
+        if ($user->role_id == 3) {
+            Notify::create([
+                'book_id' => $book->id,
+                'user_id' => $user->id,
+                'type' => false,
+                'role_id' => 2,
+
+            ]);
+        }
+
+
+        return response()->json([
+            'response' => 'done'
+        ]);
+    }
+
+    public function createBook(Request $request)
+    {
+        $user = $this->getUser($request->bearerToken());
+        $request = json_decode($request->getContent(), true);
+
+        $validator = Validator::make($request, [
+            'type_id' => 'required| integer',
+            'doc_date' => 'required',
+            'note' => 'required',
+            'company_id' => 'required| integer',
+            'doc_number' => 'required',
+            // 'doc_number' => 'required | unique:books',
+            'destination' => 'required',
+            'action_id' => 'required| integer',
+            'title' => 'required',
+
+        ]);
+
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
+
+
+
+
+        $book =  Book::create([
+            'type_id' => $request['type_id'],
+            'doc_date' => $request['doc_date'],
+            'note' => $request['note'],
+            'company_id' => $request['company_id'],
+            'user_id' => $user->id,
+            'state_id' => 3, //if u need default
+            'destination' => $request['destination'],
+            'doc_number' => $request['doc_number'],
+            'action_id' => $request['action_id'],
+            'title' => $request['title']
+
+        ]);
+
+
+        if ($user->role_id != 1) {
+            Notify::create([
+                'book_id' => $book->id,
+                'user_id' => $user->id,
+                'type' => true,
+                'role_id' => 1
+
+            ]);
+        }
+
+
+
 
         return response()->json([
             'response' => 'done'
@@ -127,7 +199,7 @@ class bookController extends Controller
         ]);
     }
 
-   
+
 
     public function search(Request $request)
     {
@@ -271,6 +343,61 @@ class bookController extends Controller
         $book->save();
         return response()->json([
             'response' => 'done'
+        ]);
+    }
+
+    public function setState(Request $request)
+    {
+        $request = json_decode($request->getContent(), true);
+        $validator = Validator::make($request['book'], [
+            'type_id' => 'required | integer',
+            'doc_date' => 'required',
+            'note' => 'required',
+            'company_id' => 'required | integer',
+            'doc_number' => 'required',
+            'destination' => 'required',
+            'action_id' => 'required | integer',
+            'title' => 'required',
+            'state_id' => 'required | integer'
+
+        ]);
+        
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
+
+            $images = [];
+            if ($request['book']['images'] != null) {
+                if (!file_exists(public_path() . '/images/book')) {
+                    File::makeDirectory(public_path() . '/images/book');
+                }
+                $names = [];
+                foreach ($request['book']['images'] as $image) {
+    
+                    $image = explode(',', $image)[1];
+    
+                    $imgdata = base64_decode($image);
+    
+                    $f = finfo_open();
+                    $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
+                    $type = explode('/', $mime_type)[1];
+                    $filename = time() . Str::random(2) . '.' . $type;
+                    File::put(public_path() . '/images/book/' . $filename, $imgdata);
+    
+                    array_push($names, '/images/book/' . $filename);
+                }
+                $images = $names;
+            }
+
+            $request['book']['images'] = $images;
+    
+        Notify::where('id', $request['id'])->first()->update(['seen' => $request['seen']]);
+
+        $book = Book::where('id', $request['book']['id'])->first();
+        $book->update($request['book']);
+        return response()->json([
+            'response' =>  $book
         ]);
     }
 }

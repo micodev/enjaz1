@@ -41,4 +41,9 @@ class Book extends Model
     {
         return $this->belongsTo('App\User', 'user_id', 'id');
     }
+
+    public function notify()
+    {
+      return  $this->hasMany('App\Notify', 'book_id' , 'id');
+    }
 }

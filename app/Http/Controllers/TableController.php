@@ -14,10 +14,19 @@ use DateTime;
 use Storage;
 use App\Token;
 use ImageOptimizer;
+use App\Book;
+use App\Contract;
+use App\Note;
+use App\Notify;
+use App\Paper;
 
 class TableController extends Controller
 {
     //
+    private function getUser($token)
+    {
+        return Token::where('api_token', $token)->first()->user()->first();
+    }
 
     public function addState(Request $request)
     {
@@ -262,6 +271,76 @@ class TableController extends Controller
         return response()->json([
             'response' => $companies,
         ]);
+    }
+
+  
+
+    public function showCounts()
+    {
+        $allBooks = Book::count();
+        $allContracts = Contract::count();
+        $allPapers = Paper::count();
+        $allNotes = Note::count();
+
+        $acceptBooks = Book::where('state_id', 1)->count();
+        $acceptContracts = Contract::where('state_id', 1)->count();
+      
+
+        $rejectBooks = Book::where('state_id', 2)->count();
+        $rejectContracts = Contract::where('state_id', 2)->count();
+
+        $waitBooks = Book::where('state_id', 3)->count();
+        $waitContracts = Contract::where('state_id', 3)->count();
+        
+      
+        return response()->json([
+            'response' => [
+                'books' => [
+                    'total' => $allBooks,
+                    'accepted' => $acceptBooks,
+                    'rejected' => $rejectBooks,
+                    'waiting' => $waitBooks
+                ],
+                'contracts' => [
+                    'total' => $allContracts,
+                    'accepted' => $acceptContracts,
+                    'rejected' => $rejectContracts,
+                    'waiting' => $waitContracts
+                ],
+                'papers' => [
+                    'total' => $allPapers
+                ],
+                'notes' => [
+                    'total' => $allNotes
+                ]
+            ]
+        ]);
+    }
+
+    public function showNotify(Request $request)
+    {
+        $user = $this->getUser($request->bearerToken());
+        $notifies = null;
+        if ($user->role_id == 3){
+            $notifies = Notify::with(['contract', 'book', 'user'])->where('seen', true)
+            ->where('user_id', $user->id)
+            ->orderBy('updated_at', 'desc');
+        }else if ($user->role_id == 2) {
+            
+            $notifies = Notify::with(['contract', 'book', 'user'])->where('role_id', $user->role_id)
+            ->where('seen', false)
+            ->orWhere(function ($query) use($user) {
+                $query->where('user_id', $user->id)
+                      ->Where('seen', true);
+            })->orderBy('updated_at', 'desc');
+        }else {
+            $notifies = Notify::with(['contract', 'book', 'user'])->where('role_id', $user->role_id)
+            ->where('seen' , false)->orderBy('updated_at', 'desc');
+        }
+     $notifies = $notifies->paginate(5);
+     return response()->json([
+        'response' => $notifies
+     ]);
     }
 
     public function test(Request $request)

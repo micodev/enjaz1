@@ -16,4 +16,8 @@ class role extends Model
     {
       return  $this->hasMany('App\User', 'user_id', 'id');
     }
+    public function notify()
+    {
+      return  $this->hasMany('App\Notify', 'role_id', 'id');
+    }
 }

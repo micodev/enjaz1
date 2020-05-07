@@ -43,4 +43,8 @@ class Contract extends Model
     {
         return $this->belongsTo('App\Action' , 'action_id', 'id');
     }
+    public function notify()
+    {
+      return  $this->hasMany('App\Notify', 'contract_id' , 'id');
+    }
 }

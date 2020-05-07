@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->integer('company_id');
             $table->integer('role_id');
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
 
@@ -30,7 +31,24 @@ class CreateUsersTable extends Migration
                 'username' => 'admin',
                 'password' => Hash::make('123'),
                 'role_id' => 1,
-                'company_id' => 1
+                'company_id' => 1,
+                'active' => true
+            ],
+            [
+                'name' => 'super',
+                'username' => 'super',
+                'password' => Hash::make('123'),
+                'role_id' => 2,
+                'company_id' => 1,
+                'active' => true
+            ],
+            [
+                'name' => 'user',
+                'username' => 'user',
+                'password' => Hash::make('123'),
+                'role_id' => 3,
+                'company_id' => 1,
+                'active' => true
             ]
         ]);
     }
