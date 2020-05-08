@@ -127,10 +127,10 @@ class UserController extends Controller
             'company_id' => $request['company_id'],
             'active' => $request['active']
         ];
-        if ($request['password'] != null){
-            $fields['password'] =Hash::make($request['password']);
+        if ($request['password'] != null) {
+            $fields['password'] = Hash::make($request['password']);
         }
-            
+
 
         $done = User::where('id', $request['id'])->first()->update($fields);
         if ($done)

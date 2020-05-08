@@ -107,8 +107,8 @@ Route::middleware(['cors', 'isActive'])->group(function () {
     Route::post('/state/book', 'BookController@changeState');
     Route::post('/state/contract', 'ContractController@changeState');
 
-    Route::post('/change/book', 'BookController@setState');
-    Route::post('/change/contract', 'ContractController@setState');
+    Route::post('/edit/book', 'BookController@setState');
+    Route::post('/edit/contract', 'ContractController@setState');
 
     // below part one of project
 
