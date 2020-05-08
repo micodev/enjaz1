@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    
+
     public function login(Request $request)
     {
         $request = json_decode($request->getContent(), true);
@@ -98,6 +98,14 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $request = json_decode($request->getContent(), true);
+
+        $validator = Validator::make($request, [
+            'id' => 'required',
+        ]);
+        if ($validator->fails())
+        return response()->json([
+            'errors' => $validator->errors()
+        ]);
         $validator = Validator::make($request, [
             'name' => 'required',
             'username' => 'required | unique:users,username,' . $request['id'],
@@ -109,6 +117,8 @@ class UserController extends Controller
             return response()->json([
                 'errors' => $validator->errors()
             ]);
+        if (isset($request['new_password']))
+            $request['password'] = Hash::make($request['new_password']);
 
         $user = User::where('id', $request['id'])->first()->update($request);
         if ($user)
@@ -159,5 +169,4 @@ class UserController extends Controller
             'response' => $users
         ]);
     }
-    
 }
