@@ -30,7 +30,8 @@ class TableController extends Controller
 
     public function addState(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $validator = Validator::make($request, [
             'value' => 'required'
         ]);
@@ -51,7 +52,8 @@ class TableController extends Controller
     }
     public function addType(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $validator = Validator::make($request, [
             'value' => 'required',
             'table' => 'required'
@@ -74,7 +76,8 @@ class TableController extends Controller
     }
     public function addRole(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $validator = Validator::make($request, [
             'value' => 'required'
         ]);
@@ -82,7 +85,7 @@ class TableController extends Controller
             return response()->json([
                 'errors' => $validator->errors()
             ]);
-        
+
         $new_id = Role::max('id');
         Role::create([
             'id' => $new_id,
@@ -95,7 +98,8 @@ class TableController extends Controller
     }
     public function addAction(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $validator = Validator::make($request, [
             'value' => 'required'
         ]);
@@ -117,7 +121,8 @@ class TableController extends Controller
 
     public function addCompany(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $validator = Validator::make($request, [
             'value' => 'required'
         ]);
@@ -155,11 +160,16 @@ class TableController extends Controller
                 'errors' => $validator->errors()
             ]);
         $id = $request['state_id'];
-        State::where('id', $id)->first()->delete();
+        $done =  State::where('id', $id)->first()->delete();
+        if ($done)
 
-        return response()->json([
-            'response' => 'done'
-        ]);
+            return response()->json([
+                'response' => 'done'
+            ]);
+        else
+            return response()->json([
+                'error' => 2
+            ]);
     }
 
     public function deleteType(Request $request)
@@ -173,11 +183,17 @@ class TableController extends Controller
                 'errors' => $validator->errors()
             ]);
         $id = $request['type_id'];
-        Type::where('id', $id)->first()->delete();
+        $done =  Type::where('id', $id)->first()->delete();
 
-        return response()->json([
-            'response' => 'done'
-        ]);
+        if ($done)
+
+            return response()->json([
+                'response' => 'done'
+            ]);
+        else
+            return response()->json([
+                'error' => 2
+            ]);
     }
 
     public function deleteRole(Request $request)
@@ -191,11 +207,17 @@ class TableController extends Controller
                 'errors' => $validator->errors()
             ]);
         $id = $request['role_id'];
-        Role::where('id', $id)->first()->delete();
+        $done =  Role::where('id', $id)->first()->delete();
 
-        return response()->json([
-            'response' => 'done'
-        ]);
+        if ($done)
+
+            return response()->json([
+                'response' => 'done'
+            ]);
+        else
+            return response()->json([
+                'error' => 2
+            ]);
     }
 
     public function deleteAction(Request $request)
@@ -209,11 +231,17 @@ class TableController extends Controller
                 'errors' => $validator->errors()
             ]);
         $id = $request['action_id'];
-        Action::where('id', $id)->first()->delete();
+        $done =  Action::where('id', $id)->first()->delete();
 
-        return response()->json([
-            'response' => 'done'
-        ]);
+        if ($done)
+
+            return response()->json([
+                'response' => 'done'
+            ]);
+        else
+            return response()->json([
+                'error' => 2
+            ]);
     }
     public function deleteCompany(Request $request)
     {
@@ -226,11 +254,17 @@ class TableController extends Controller
                 'errors' => $validator->errors()
             ]);
         $id = $request['company_id'];
-        Company::where('id', $id)->first()->delete();
+        $done =  Company::where('id', $id)->first()->delete();
 
-        return response()->json([
-            'response' => 'done'
-        ]);
+        if ($done)
+
+            return response()->json([
+                'response' => 'done'
+            ]);
+        else
+            return response()->json([
+                'error' => 2
+            ]);
     }
 
     public function showStates()
@@ -273,7 +307,7 @@ class TableController extends Controller
         ]);
     }
 
-  
+
 
     public function showCounts()
     {
@@ -284,15 +318,15 @@ class TableController extends Controller
 
         $acceptBooks = Book::where('state_id', 1)->count();
         $acceptContracts = Contract::where('state_id', 1)->count();
-      
+
 
         $rejectBooks = Book::where('state_id', 2)->count();
         $rejectContracts = Contract::where('state_id', 2)->count();
 
         $waitBooks = Book::where('state_id', 3)->count();
         $waitContracts = Contract::where('state_id', 3)->count();
-        
-      
+
+
         return response()->json([
             'response' => [
                 'books' => [
@@ -321,37 +355,36 @@ class TableController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
         $notifies = null;
-        if ($user->role_id == 3){
+        if ($user->role_id == 3) {
             $notifies = Notify::with(['contract', 'book', 'user'])->where('seen', true)
-            ->where('user_id', $user->id)
-            ->orderBy('updated_at', 'desc');
-        }else if ($user->role_id == 2) {
-            
+                ->where('user_id', $user->id)
+                ->orderBy('updated_at', 'desc');
+        } else if ($user->role_id == 2) {
+
             $notifies = Notify::with(['contract', 'book', 'user'])->where('role_id', $user->role_id)
-            ->where('seen', false)
-            ->orWhere(function ($query) use($user) {
-                $query->where('user_id', $user->id)
-                      ->Where('seen', true);
-            })->orderBy('updated_at', 'desc');
-        }else {
+                ->where('seen', false)
+                ->orWhere(function ($query) use ($user) {
+                    $query->where('user_id', $user->id)
+                        ->Where('seen', true);
+                })->orderBy('updated_at', 'desc');
+        } else {
             $notifies = Notify::with(['contract', 'book', 'user'])->where('role_id', $user->role_id)
-            ->where('seen' , false)->orderBy('updated_at', 'desc');
+                ->where('seen', false)->orderBy('updated_at', 'desc');
         }
-     $notifies = $notifies->paginate(5);
-     return response()->json([
-        'response' => $notifies
-     ]);
+        $notifies = $notifies->paginate(5);
+        return response()->json([
+            'response' => $notifies
+        ]);
     }
 
     public function test(Request $request)
     {
-        $img =array();
+        $img = array();
         return $img;
-        $pathToImage = public_path(). "/images/paper/5.jpg";
-        $te =public_path(). "/images/note/1.jpeg";
-      
-          ImageOptimizer::optimize($pathToImage, $te);
+        $pathToImage = public_path() . "/images/paper/5.jpg";
+        $te = public_path() . "/images/note/1.jpeg";
+
+        ImageOptimizer::optimize($pathToImage, $te);
         return "true";
-      
     }
 }

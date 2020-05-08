@@ -18,7 +18,7 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
 
         $validator = Validator::make($request, [
             'username' => 'required',
@@ -55,7 +55,7 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
 
         $validator = Validator::make($request, [
             'name' => 'required',
@@ -84,50 +84,62 @@ class UserController extends Controller
 
     public function delete(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
-        $user = User::where('id', $request['id'])->first()->delete();
-        if ($user)
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $done = User::where('id', $request['id'])->first()->delete();
+        if ($done)
             return response()->json([
                 'response' => 'done'
             ]);
         else
             return response()->json([
-                'response' => 'Not Done'
+                'error' => 2
             ]);
     }
     public function update(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
 
         $validator = Validator::make($request, [
             'id' => 'required',
         ]);
         if ($validator->fails())
-        return response()->json([
-            'errors' => $validator->errors()
-        ]);
-        $validator = Validator::make($request, [
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
+        $rules = [
             'name' => 'required',
             'username' => 'required | unique:users,username,' . $request['id'],
-            'new_password' => ' min:6',
             'role_id' => 'required',
-            'company_id' => 'required'
-        ]);
+            'company_id' => 'required',
+            'active' => 'required'
+        ];
+        if ($request['password'] != null)
+            $rules['password'] =  'min:6';
+        $validator = Validator::make($request, $rules);
         if ($validator->fails())
             return response()->json([
                 'errors' => $validator->errors()
             ]);
-        if (isset($request['new_password']))
-            $request['password'] = Hash::make($request['new_password']);
+        $fields = [
+            'name' => $request['name'],
+            'username' => $request['username'],
+            'role_id' => $request['role_id'],
+            'company_id' => $request['company_id'],
+            'active' => $request['active']
+        ];
+        if ($request['password'] != null){
+            $fields['password'] =Hash::make($request['password']);
+        }
+            
 
-        $user = User::where('id', $request['id'])->first()->update($request);
-        if ($user)
+        $done = User::where('id', $request['id'])->first()->update($fields);
+        if ($done)
             return response()->json([
                 'response' => 'done'
             ]);
         else
             return response()->json([
-                'response' => 'Not Done'
+                'error' => 2
             ]);
     }
     public function show()
@@ -141,7 +153,7 @@ class UserController extends Controller
     }
     public function search(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
         $empty = true;
         $users = User::with(['company', 'role'])->orderBy('created_at', 'desc');
         if ($request['username'] != null) {

@@ -23,10 +23,11 @@ class paperController extends Controller
     public function create(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-       // $user = User::where('id', '1')->first();
-       $request =json_decode($request->getContent(), true);
-     
-       
+        // $user = User::where('id', '1')->first();
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
+
+
         $validator = Validator::make($request, [
             'title' => 'required',
             'doc_date' => 'required',
@@ -42,20 +43,20 @@ class paperController extends Controller
         $images = [];
         if (isset($request['images'])) {
             if (!file_exists(public_path() . '/images/paper')) {
-                File::makeDirectory(public_path(). '/images/paper');
+                File::makeDirectory(public_path() . '/images/paper');
             }
             $names = [];
             foreach ($request['images'] as $image) {
 
                 $image = explode(',', $image)[1];
-       
+
                 $imgdata = base64_decode($image);
-               
+
                 $f = finfo_open();
                 $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
                 //return $mime_type;
                 $type = explode('/', $mime_type)[1];
-        
+
                 //  $image = str_replace(' ', '+', $image);
                 $filename = time() . Str::random(2) . '.' . $type;
                 File::put(public_path() . '/images/paper/' . $filename, $imgdata);
@@ -75,7 +76,7 @@ class paperController extends Controller
             'images' => $images
 
         ]);
-      //  return $p->images;
+        //  return $p->images;
         return response()->json([
             'response' => 'done'
         ]);
@@ -92,29 +93,34 @@ class paperController extends Controller
 
     public function delete(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $id = $request['id'];
-        $paper = Paper::where('id', $id)->first()->delete();
-        return response()->json([
-            'response' => 'done'
-        ]);
+        $done = Paper::where('id', $id)->first()->delete();
+        if ($done)
+            return response()->json([
+                'response' => 'done'
+            ]);
+        else
+            return response()->json([
+                'error' => 2
+            ]);
     }
 
     public function search(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $papers = Paper::with(['company', 'user'])->orderBy('created_at', 'desc');
         $empty = true;
-        if (isset($request['company_id'])){
+        if (isset($request['company_id'])) {
             $papers = $papers->where('company_id', $request['company_id']);
             $empty = false;
-            
         }
-        if (isset($request['title'])){
+        if (isset($request['title'])) {
             $papers = $papers->where('title', 'like', '%' . $request['title'] . '%');
             $empty = false;
-
         }
         if (isset($request['date_from']) && isset($request['date_to'])) {
 
@@ -127,9 +133,9 @@ class paperController extends Controller
             $empty = false;
         }
         if ($empty)
-        return response()->json([
-            'response' => 'Bad Request'
-        ]);
+            return response()->json([
+                'response' => 'Bad Request'
+            ]);
 
         $papers = $papers->paginate(5);
 
@@ -138,11 +144,12 @@ class paperController extends Controller
         ]);
     }
 
-   
+
 
     public function deleteImage(Request $request)
     {
-        $request =json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $id = $request['paper_id'];
         $paper = Paper::where('id', $id)->first();
@@ -162,10 +169,11 @@ class paperController extends Controller
 
     public function update(Request $request)
     {
-          $user = $this->getUser($request->bearerToken());
-        
-       // $user = User::where('id', '1')->first();
-        $request =json_decode($request->getContent(), true);
+        $user = $this->getUser($request->bearerToken());
+
+        // $user = User::where('id', '1')->first();
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $validator = Validator::make($request, [
             'id' => 'required',
@@ -186,9 +194,9 @@ class paperController extends Controller
             foreach ($request['temp'] as $image) {
 
                 $image = explode(',', $image)[1];
-       
+
                 $imgdata = base64_decode($image);
-               
+
                 $f = finfo_open();
                 $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
                 $type = explode('/', $mime_type)[1];
@@ -210,10 +218,9 @@ class paperController extends Controller
 
         );
 
-       $paper->update($data);
+        $paper->update($data);
         return response()->json([
             'response' =>  $paper
         ]);
     }
 }
-

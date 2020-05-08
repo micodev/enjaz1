@@ -21,8 +21,9 @@ class noteController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
         // $user = User::where('id', '1')->first();
-       
-        $request = json_decode($request->getContent(), true);
+
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $validator = Validator::make($request, [
 
@@ -97,19 +98,26 @@ class noteController extends Controller
 
     public function delete(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $id = $request['id'];
         $note = Note::where('id', $id)->first()->delete();
-        return response()->json([
-            'response' => 'done'
-        ]);
+        if ($note)
+            return response()->json([
+                'response' => 'done'
+            ]);
+        else
+            return response()->json([
+                'error' => 2
+            ]);
     }
 
 
     public function deleteImage(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $id = $request['note_id'];
         $note = Note::where('id', $id)->first();
@@ -131,11 +139,12 @@ class noteController extends Controller
 
     public function search(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $empty = true;
-       
+
         $notes = Note::with(['company', 'user'])->orderBy('created_at', 'desc');
-       
+
         if (isset($request['company_id'])) {
             $notes = $notes->where('company_id', $request['company_id']);
             $empty = false;
@@ -164,15 +173,14 @@ class noteController extends Controller
             $from = $date->format('Y-m-d');
             $to = $request['date_to'];
             $notes = $notes->whereBetween('doc_date', [$from . '%', $to . '%']);
-           
         }
 
         if ($empty)
             return response()->json([
                 'response' => 'Bad Request'
             ]);
-           
-       
+
+
         $notes = $notes->paginate(5);
         return response()->json([
             'response' => $notes
@@ -183,7 +191,8 @@ class noteController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
         // $user = User::where('id', '1')->first();
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $validator = Validator::make($request, [
             'id' => 'required',
@@ -237,9 +246,16 @@ class noteController extends Controller
 
         );
 
-        $note->update($data);
+      $done =  $note->update($data);
+
+        if ($done)
         return response()->json([
-            'response' => $note
+            'response' =>$note
         ]);
+    else
+        return response()->json([
+            'error' => 2
+        ]);
+       
     }
 }

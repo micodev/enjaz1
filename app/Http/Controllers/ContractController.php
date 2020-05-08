@@ -21,7 +21,8 @@ class contractController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
         // $user = User::where('id', '1')->first();
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
 
         $validator = Validator::make($request, [
@@ -95,7 +96,8 @@ class contractController extends Controller
     public function createContract(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $validator = Validator::make($request, [
             'type_id' => 'required | integer',
@@ -151,7 +153,8 @@ class contractController extends Controller
 
     public function delete(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $id = $request['id'];
         $contract = Contract::where('id', $id)->first()->delete();
@@ -162,7 +165,8 @@ class contractController extends Controller
 
     public function deleteImage(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $id = $request['contract_id'];
 
@@ -185,7 +189,8 @@ class contractController extends Controller
 
     public function search(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $empty = true;
 
         $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc');
@@ -250,7 +255,8 @@ class contractController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
         // $user = User::where('id', '1')->first();
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $validator = Validator::make($request, [
             'id' => 'required',
@@ -322,7 +328,8 @@ class contractController extends Controller
     }
     public function changeState(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $contract = Contract::where('id', $request['id'])->first();
         $contract->state_id = $request['state_id'];
         $contract->save();
@@ -333,7 +340,8 @@ class contractController extends Controller
 
     public function setState(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $validator = Validator::make($request, [
             'type_id' => 'required | integer',
             'doc_date' => 'required',

@@ -19,19 +19,22 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::middleware(['cors'])->group(function () {
+    Route::post('/login/user', 'UserController@login');
+});
+Route::middleware(['cors', 'isActive'])->group(function () {
 
 
     Route::post('/search', 'PaperController@search');
     Route::put('/update', 'PaperController@update');
 
     // below 6 routes about user
-    Route::post('/login/user', 'UserController@login');
+
     Route::post('/register/user', 'UserController@register');
     Route::post('/delete/user', 'UserController@delete');
-    Route::post('/update/user', 'UserController@update');
+    Route::put('/update/user', 'UserController@update');
     Route::get('/show/users', 'UserController@show');
     Route::post('/search/users', 'UserController@search');
-    
+
 
 
     Route::get('/test', 'TableController@test');
@@ -109,7 +112,6 @@ Route::middleware(['cors'])->group(function () {
 
     // below part one of project
 
-
+    Route::get('/show/counts', 'TableController@showCounts');
+    Route::get('/show/notify', 'TableController@showNotify');
 });
-Route::get('/show/counts', 'TableController@showCounts');
-Route::get('/show/notify', 'TableController@showNotify');

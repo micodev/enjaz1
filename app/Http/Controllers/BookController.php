@@ -23,7 +23,8 @@ class bookController extends Controller
         $user = $this->getUser($request->bearerToken());
 
         //  $user = User::where('id', '1')->first();
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $validator = Validator::make($request, [
             'type_id' => 'required| integer',
@@ -102,7 +103,8 @@ class bookController extends Controller
     public function createBook(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $validator = Validator::make($request, [
             'type_id' => 'required| integer',
@@ -169,19 +171,27 @@ class bookController extends Controller
 
     public function delete(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $id = $request['id'];
-        $book = Book::where('id', $id)->first()->delete();
-        return response()->json([
-            'response' => 'done'
-        ]);
+        $done = Book::where('id', $id)->first()->delete();
+
+        if ($done)
+            return response()->json([
+                'response' => 'done'
+            ]);
+        else
+            return response()->json([
+                'error' => 2
+            ]);
     }
 
 
 
     public function deleteImage(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $id = $request['book_id'];
         $path = $request['img_path'];
@@ -203,7 +213,8 @@ class bookController extends Controller
 
     public function search(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $empty = true;
 
         $books = Book::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc');
@@ -267,7 +278,8 @@ class bookController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
         // $user = User::where('id', '1')->first();
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
 
         $validator = Validator::make($request, [
             'type_id' => 'required | integer',
@@ -321,10 +333,15 @@ class bookController extends Controller
 
         );
 
-        $book->update($data);
-        return response()->json([
-            'response' =>  $book
-        ]);
+        $done =  $book->update($data);
+        if ($done)
+            return response()->json([
+                'response' =>  $book
+            ]);
+        else
+            return response()->json([
+                'error' => 2
+            ]);
     }
 
     public function waitBooks()
@@ -337,7 +354,8 @@ class bookController extends Controller
     }
     public function changeState(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $book = Book::where('id', $request['id'])->first();
         $book->state_id = $request['state_id'];
         $book->save();
@@ -348,7 +366,8 @@ class bookController extends Controller
 
     public function setState(Request $request)
     {
-        $request = json_decode($request->getContent(), true);
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+
         $validator = Validator::make($request['book'], [
             'type_id' => 'required | integer',
             'doc_date' => 'required',
@@ -361,43 +380,48 @@ class bookController extends Controller
             'state_id' => 'required | integer'
 
         ]);
-        
+
         if ($validator->fails())
             return response()->json([
                 'errors' => $validator->errors()
             ]);
 
-            $images = [];
-            if ($request['book']['images'] != null) {
-                if (!file_exists(public_path() . '/images/book')) {
-                    File::makeDirectory(public_path() . '/images/book');
-                }
-                $names = [];
-                foreach ($request['book']['images'] as $image) {
-    
-                    $image = explode(',', $image)[1];
-    
-                    $imgdata = base64_decode($image);
-    
-                    $f = finfo_open();
-                    $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
-                    $type = explode('/', $mime_type)[1];
-                    $filename = time() . Str::random(2) . '.' . $type;
-                    File::put(public_path() . '/images/book/' . $filename, $imgdata);
-    
-                    array_push($names, '/images/book/' . $filename);
-                }
-                $images = $names;
+        $images = [];
+        if ($request['book']['images'] != null) {
+            if (!file_exists(public_path() . '/images/book')) {
+                File::makeDirectory(public_path() . '/images/book');
             }
+            $names = [];
+            foreach ($request['book']['images'] as $image) {
 
-            $request['book']['images'] = $images;
-    
+                $image = explode(',', $image)[1];
+
+                $imgdata = base64_decode($image);
+
+                $f = finfo_open();
+                $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
+                $type = explode('/', $mime_type)[1];
+                $filename = time() . Str::random(2) . '.' . $type;
+                File::put(public_path() . '/images/book/' . $filename, $imgdata);
+
+                array_push($names, '/images/book/' . $filename);
+            }
+            $images = $names;
+        }
+
+        $request['book']['images'] = $images;
+
         Notify::where('id', $request['id'])->first()->update(['seen' => $request['seen']]);
 
         $book = Book::where('id', $request['book']['id'])->first();
-        $book->update($request['book']);
+      $done =  $book->update($request['book']);
+      if ($done)
         return response()->json([
             'response' =>  $book
+        ]);
+        else
+        return response()->json([
+            'error' =>  2
         ]);
     }
 }
