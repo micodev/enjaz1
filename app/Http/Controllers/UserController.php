@@ -46,10 +46,10 @@ class UserController extends Controller
                 ]);
             } else
                 return response()->json([
-                    'response' => 'Deactive'
+                    'response' => 1
                 ]);
         } else  return response()->json([
-            'response' => 'unauthorized'
+            'response' => 3
         ]);
     }
 
@@ -85,6 +85,14 @@ class UserController extends Controller
     public function delete(Request $request)
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $validator = Validator::make($request, [
+            'id' => 'required',
+        ]);
+
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
         $done = User::where('id', $request['id'])->first()->delete();
         if ($done)
             return response()->json([
@@ -92,7 +100,7 @@ class UserController extends Controller
             ]);
         else
             return response()->json([
-                'error' => 2
+                'response' => 2
             ]);
     }
     public function update(Request $request)
@@ -139,7 +147,7 @@ class UserController extends Controller
             ]);
         else
             return response()->json([
-                'error' => 2
+                'response' => 2
             ]);
     }
     public function show()
@@ -174,7 +182,7 @@ class UserController extends Controller
         }
         if ($empty)
             return response()->json([
-                'response' => 'Bad Request'
+                'response' => 4
             ]);
         $users = $users->paginate(20);
         return response()->json([

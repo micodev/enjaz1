@@ -20,13 +20,8 @@ class noteController extends Controller
     public function create(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-        // $user = User::where('id', '1')->first();
-
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
-
-
         $validator = Validator::make($request, [
-
             'doc_date' => 'required',
             'note' => 'required',
             'company_id' => 'required | integer',
@@ -70,7 +65,7 @@ class noteController extends Controller
         }
 
 
-        $n =  Note::create([
+        Note::create([
             'title' => $request['title'],
             'doc_date' => $request['doc_date'],
             'note' => $request['note'],
@@ -99,8 +94,14 @@ class noteController extends Controller
     public function delete(Request $request)
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $validator = Validator::make($request, [
+            'id' => 'required',
+        ]);
 
-
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
         $id = $request['id'];
         $note = Note::where('id', $id)->first()->delete();
         if ($note)
@@ -109,7 +110,7 @@ class noteController extends Controller
             ]);
         else
             return response()->json([
-                'error' => 2
+                'response' => 2
             ]);
     }
 
@@ -117,10 +118,21 @@ class noteController extends Controller
     public function deleteImage(Request $request)
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $validator = Validator::make($request, [
+            'note_id' => 'required',
+            'img_path' => 'required',
+        ]);
 
-
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
         $id = $request['note_id'];
         $note = Note::where('id', $id)->first();
+        if (!$note)
+        return response()->json([
+            'response' => 2
+        ]);
         $images = $note->images;
 
         $path = $request['img_path'];
@@ -177,7 +189,7 @@ class noteController extends Controller
 
         if ($empty)
             return response()->json([
-                'response' => 'Bad Request'
+                'response' => 4
             ]);
 
 
@@ -254,7 +266,7 @@ class noteController extends Controller
         ]);
     else
         return response()->json([
-            'error' => 2
+            'response' => 2
         ]);
        
     }

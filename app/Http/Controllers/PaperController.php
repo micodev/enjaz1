@@ -23,23 +23,17 @@ class paperController extends Controller
     public function create(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-        // $user = User::where('id', '1')->first();
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
-
-
-
         $validator = Validator::make($request, [
             'title' => 'required',
             'doc_date' => 'required',
             'note' => 'required',
             'company_id' => 'required | integer'
         ]);
-        //  return $request;
         if ($validator->fails())
             return response()->json([
                 'errors' => $validator->errors()
             ]);
-        //  dd($request->image);
         $images = [];
         if (isset($request['images'])) {
             if (!file_exists(public_path() . '/images/paper')) {
@@ -54,20 +48,16 @@ class paperController extends Controller
 
                 $f = finfo_open();
                 $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
-                //return $mime_type;
                 $type = explode('/', $mime_type)[1];
-
-                //  $image = str_replace(' ', '+', $image);
                 $filename = time() . Str::random(2) . '.' . $type;
                 File::put(public_path() . '/images/paper/' . $filename, $imgdata);
-
                 array_push($names, '/images/paper/' . $filename);
             }
             $images = $names;
         }
 
 
-        $p =  Paper::create([
+        Paper::create([
             'title' => $request['title'],
             'doc_date' => $request['doc_date'],
             'note' => $request['note'],
@@ -76,7 +66,7 @@ class paperController extends Controller
             'images' => $images
 
         ]);
-        //  return $p->images;
+
         return response()->json([
             'response' => 'done'
         ]);
@@ -94,7 +84,14 @@ class paperController extends Controller
     public function delete(Request $request)
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $validator = Validator::make($request, [
+            'id' => 'required',
+        ]);
 
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
         $id = $request['id'];
         $done = Paper::where('id', $id)->first()->delete();
         if ($done)
@@ -103,7 +100,7 @@ class paperController extends Controller
             ]);
         else
             return response()->json([
-                'error' => 2
+                'response' => 2
             ]);
     }
 
@@ -134,7 +131,7 @@ class paperController extends Controller
         }
         if ($empty)
             return response()->json([
-                'response' => 'Bad Request'
+                'response' => 4
             ]);
 
         $papers = $papers->paginate(5);
@@ -149,10 +146,22 @@ class paperController extends Controller
     public function deleteImage(Request $request)
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $validator = Validator::make($request, [
+            'paper_id' => 'required',
+            'img_path' => 'required',
+        ]);
 
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
 
         $id = $request['paper_id'];
         $paper = Paper::where('id', $id)->first();
+        if (!$paper)
+        return response()->json([
+            'response' => 2
+        ]);
         $images = $paper->images;
 
         $path = $request['img_path'];
@@ -170,8 +179,6 @@ class paperController extends Controller
     public function update(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-
-        // $user = User::where('id', '1')->first();
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
 
 
@@ -182,7 +189,7 @@ class paperController extends Controller
             'note' => 'required',
             'company_id' => 'required | integer'
         ]);
-        //  return $request;
+
         if ($validator->fails())
             return response()->json([
                 'errors' => $validator->errors()
@@ -218,9 +225,14 @@ class paperController extends Controller
 
         );
 
-        $paper->update($data);
-        return response()->json([
-            'response' =>  $paper
-        ]);
+        $done =  $paper->update($data);
+        if ($done)
+            return response()->json([
+                'response' =>  $paper
+            ]);
+        else
+            return response()->json([
+                'response' =>  2
+            ]);
     }
 }

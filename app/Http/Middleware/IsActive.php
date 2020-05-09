@@ -21,7 +21,7 @@ class IsActive
         if ($active)
             return $next($request);
         return response()->json([
-            'error' => 1
+            'response' => 1
         ]);
     }
 }

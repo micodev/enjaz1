@@ -172,7 +172,14 @@ class bookController extends Controller
     public function delete(Request $request)
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $validator = Validator::make($request, [
+            'id' => 'required',
+        ]);
 
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
         $id = $request['id'];
         $done = Book::where('id', $id)->first()->delete();
 
@@ -182,7 +189,7 @@ class bookController extends Controller
             ]);
         else
             return response()->json([
-                'error' => 2
+                'response' => 2
             ]);
     }
 
@@ -191,11 +198,23 @@ class bookController extends Controller
     public function deleteImage(Request $request)
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $validator = Validator::make($request, [
+            'book_id' => 'required',
+            'img_path' => 'required',
+        ]);
 
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
 
         $id = $request['book_id'];
         $path = $request['img_path'];
         $book = Book::where('id', $id)->first();
+        if (!$book)
+        return response()->json([
+            'response' => 2
+        ]);
         $images = $book->images;
 
         $images =   array_diff($images, [$path]);
@@ -266,7 +285,7 @@ class bookController extends Controller
 
         if ($empty)
             return response()->json([
-                'response' => 'Bad Request'
+                'response' => 4
             ]);
         $books = $books->paginate(5);
         return response()->json([
@@ -340,7 +359,7 @@ class bookController extends Controller
             ]);
         else
             return response()->json([
-                'error' => 2
+                'response' => 2
             ]);
     }
 
@@ -355,8 +374,19 @@ class bookController extends Controller
     public function changeState(Request $request)
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $validator = Validator::make($request, [
+            'id' => 'required',
+        ]);
 
+        if ($validator->fails())
+            return response()->json([
+                'errors' => $validator->errors()
+            ]);
         $book = Book::where('id', $request['id'])->first();
+        if (!$book)
+        return response()->json([
+            'response' => 2
+        ]);
         $book->state_id = $request['state_id'];
         $book->save();
         return response()->json([
@@ -414,14 +444,14 @@ class bookController extends Controller
         Notify::where('id', $request['id'])->first()->update(['seen' => $request['seen']]);
 
         $book = Book::where('id', $request['book']['id'])->first();
-      $done =  $book->update($request['book']);
-      if ($done)
-        return response()->json([
-            'response' =>  $book
-        ]);
+        $done =  $book->update($request['book']);
+        if ($done)
+            return response()->json([
+                'response' =>  $book
+            ]);
         else
-        return response()->json([
-            'error' =>  2
-        ]);
+            return response()->json([
+                'response' =>  2
+            ]);
     }
 }
