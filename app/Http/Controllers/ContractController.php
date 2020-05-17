@@ -454,9 +454,7 @@ class contractController extends Controller
             'destination' => 'required',
             'action_id' => 'required | integer',
             'title' => 'required',
-            'contract' => 'required',
-            'user' => 'required'
-
+           
         ]);
 
         if ($validator->fails())
