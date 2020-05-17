@@ -19,7 +19,7 @@ class CreateBooksTable extends Migration
             $table->string('title');
             $table->string('doc_number');
             $table->string('doc_date');
-            $table->string('note');
+            $table->string('note')->nullable();
             $table->longText('images')->nullable();
             $table->longText('body')->nullable();
             $table->integer('company_id');

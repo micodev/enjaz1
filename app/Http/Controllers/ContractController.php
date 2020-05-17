@@ -27,14 +27,12 @@ class contractController extends Controller
         $validator = Validator::make($request, [
             'type_id' => 'required | integer',
             'doc_date' => 'required',
-            'note' => 'required',
             'company_id' => 'required | integer',
             'doc_number' => 'required',
             // 'doc_number' => 'required | unique:contracts',
             'destination' => 'required',
             'action_id' => 'required | integer',
             'title' => 'required',
-            'body' => 'required'
         ]);
 
         if ($validator->fails())
@@ -68,7 +66,7 @@ class contractController extends Controller
         $contract =   Contract::create([
             'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
-            'note' => $request['note'],
+            'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'images' => $images,
@@ -77,7 +75,7 @@ class contractController extends Controller
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
             'title' => $request['title'],
-            'body' => $request['body']
+            'body' => isset($request['body']) ? $request['body'] : ""
 
         ]);
         if ($user->role_id == 3) {
@@ -114,14 +112,12 @@ class contractController extends Controller
         $validator = Validator::make($request, [
             'type_id' => 'required | integer',
             'doc_date' => 'required',
-            'note' => 'required',
             'company_id' => 'required | integer',
             'doc_number' => 'required',
             // 'doc_number' => 'required | unique:contracts',
             'destination' => 'required',
             'action_id' => 'required | integer',
-            'title' => 'required',
-            'body' => 'required'
+            'title' => 'required'
         ]);
 
         if ($validator->fails())
@@ -132,7 +128,7 @@ class contractController extends Controller
         $contract =   Contract::create([
             'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
-            'note' => $request['note'],
+            'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'state_id' => 3,
@@ -140,7 +136,7 @@ class contractController extends Controller
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
             'title' => $request['title'],
-            'body' => $request['body']
+            'body' => isset($request['body']) ? $request['body'] : ""
 
         ]);
 
@@ -335,7 +331,6 @@ class contractController extends Controller
             'id' => 'required',
             'type_id' => 'required | integer',
             'doc_date' => 'required',
-            'note' => 'required',
             'company_id' => 'required | integer',
             'doc_number' => 'required',
             'destination' => 'required',
@@ -373,7 +368,7 @@ class contractController extends Controller
         $data = array(
             'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
-            'note' => $request['note'],
+            'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'images' => $images,
@@ -447,14 +442,13 @@ class contractController extends Controller
         $validator = Validator::make($request['contract'], [
             'type_id' => 'required | integer',
             'doc_date' => 'required',
-            'note' => 'required',
             'company_id' => 'required | integer',
             'doc_number' => 'required',
             // 'doc_number' => 'required | unique:contracts',
             'destination' => 'required',
             'action_id' => 'required | integer',
             'title' => 'required',
-           
+
         ]);
 
         if ($validator->fails())
@@ -492,7 +486,7 @@ class contractController extends Controller
 
         if (count($user->tokens) > 0) {
             foreach ($user->tokens as $tokens) {
-                $this->NotifyState($tokens->notify_token, $request['contract']['title'], $request['contract']['state_id'] == 1? true : false);
+                $this->NotifyState($tokens->notify_token, $request['contract']['title'], $request['contract']['state_id'] == 1 ? true : false);
             }
         }
         $contract = Contract::where('id', $request['id']);

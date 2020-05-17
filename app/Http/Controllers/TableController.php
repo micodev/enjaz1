@@ -359,19 +359,19 @@ class TableController extends Controller
         $user = $this->getUser($request->bearerToken());
         $notifies = null;
         if ($user->role_id == 3) {
-            $notifies = Notify::with(['contract', 'book', 'user'])->where('seen', true)
+            $notifies = Notify::with(['contract.type', 'book.type', 'user'])->where('seen', true)
                 ->where('user_id', $user->id)
                 ->orderBy('updated_at', 'desc');
         } else if ($user->role_id == 2) {
 
-            $notifies = Notify::with(['contract', 'book', 'user'])->where('role_id', $user->role_id)
+            $notifies = Notify::with(['contract.type', 'book.type', 'user'])->where('role_id', $user->role_id)
                 ->where('seen', false)
                 ->orWhere(function ($query) use ($user) {
                     $query->where('user_id', $user->id)
                         ->Where('seen', true);
                 })->orderBy('updated_at', 'desc');
         } else {
-            $notifies = Notify::with(['contract', 'book', 'user'])->where('role_id', $user->role_id)
+            $notifies = Notify::with(['contract.type', 'book.type', 'user'])->where('role_id', $user->role_id)
                 ->where('seen', false)->orderBy('updated_at', 'desc');
         }
         $notifies = $notifies->paginate(5);

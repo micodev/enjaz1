@@ -20,7 +20,7 @@ class CreateNotesTable extends Migration
             $table->string('title');
             $table->string('incoming');
             $table->string('outcoming');
-            $table->string('note');
+            $table->string('note')->nullable();
             $table->integer('company_id');
             $table->longText('images');
             $table->integer('user_id');

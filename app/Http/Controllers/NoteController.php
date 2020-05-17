@@ -23,7 +23,6 @@ class noteController extends Controller
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
         $validator = Validator::make($request, [
             'doc_date' => 'required',
-            'note' => 'required',
             'company_id' => 'required | integer',
             'doc_number' => 'required | integer',
             // 'doc_number' => 'required | unique:notes',
@@ -68,7 +67,7 @@ class noteController extends Controller
         Note::create([
             'title' => $request['title'],
             'doc_date' => $request['doc_date'],
-            'note' => $request['note'],
+            'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'images' => $images,
@@ -223,7 +222,6 @@ class noteController extends Controller
             'title' => 'required',
             'doc_date' => 'required',
             'doc_number' => 'required',
-            'note' => 'required',
             'incoming' => 'required',
             'outcoming' => 'required',
             'company_id' => 'required | integer'
@@ -260,7 +258,7 @@ class noteController extends Controller
         $data = array(
             'title' => $request['title'],
             'doc_date' => $request['doc_date'],
-            'note' => $request['note'],
+            'note' => isset($request['note']) ? $request['note'] : "",
             'images' => $images,
             'doc_number' => $request['doc_number'],
             'incoming' => $request['incoming'],

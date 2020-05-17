@@ -17,7 +17,7 @@ class CreatePapersTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('doc_date');
-            $table->string('note');
+            $table->string('note')->nullable();
             $table->integer('company_id');
             $table->longText('images')->nullable();
             $table->integer('user_id');

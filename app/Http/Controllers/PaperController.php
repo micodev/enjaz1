@@ -27,13 +27,12 @@ class paperController extends Controller
         $validator = Validator::make($request, [
             'title' => 'required',
             'doc_date' => 'required',
-            'note' => 'required',
             'company_id' => 'required | integer'
         ]);
         if ($validator->fails())
-        return response()->json([
-            'response' => 5
-        ], 400);
+            return response()->json([
+                'response' => 5
+            ], 400);
         $images = [];
         if (isset($request['images'])) {
             if (!file_exists(public_path() . '/images/paper')) {
@@ -60,7 +59,7 @@ class paperController extends Controller
         Paper::create([
             'title' => $request['title'],
             'doc_date' => $request['doc_date'],
-            'note' => $request['note'],
+            'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'images' => $images
@@ -91,9 +90,9 @@ class paperController extends Controller
         ]);
 
         if ($validator->fails())
-        return response()->json([
-            'response' => 5
-        ], 400);
+            return response()->json([
+                'response' => 5
+            ], 400);
         $id = $request['id'];
         $paper = Paper::where('id', $id)->first();
         if (!$paper)
@@ -165,9 +164,9 @@ class paperController extends Controller
         ]);
 
         if ($validator->fails())
-        return response()->json([
-            'response' => 5
-        ], 400);
+            return response()->json([
+                'response' => 5
+            ], 400);
 
         $id = $request['paper_id'];
         $paper = Paper::where('id', $id)->first();
@@ -199,14 +198,13 @@ class paperController extends Controller
             'id' => 'required',
             'title' => 'required',
             'doc_date' => 'required',
-            'note' => 'required',
             'company_id' => 'required | integer'
         ]);
 
         if ($validator->fails())
-        return response()->json([
-            'response' => 5
-        ], 400);
+            return response()->json([
+                'response' => 5
+            ], 400);
         $paper = Paper::where('id', $request['id'])->first();
         $new_images = [];
         if ($request['temp'] != null) {
@@ -231,7 +229,7 @@ class paperController extends Controller
         $data = array(
             'title' => $request['title'],
             'doc_date' => $request['doc_date'],
-            'note' => $request['note'],
+            'note' => isset($request['note']) ? $request['note'] : "",
             'images' => $images,
             'company_id' => $request['company_id'],
             'user_id' => $user->id

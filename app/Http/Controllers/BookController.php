@@ -29,14 +29,12 @@ class bookController extends Controller
         $validator = Validator::make($request, [
             'type_id' => 'required| integer',
             'doc_date' => 'required',
-            'note' => 'required',
             'company_id' => 'required| integer',
             'doc_number' => 'required',
             // 'doc_number' => 'required | unique:books',
             'destination' => 'required',
             'action_id' => 'required| integer',
             'title' => 'required',
-            'body' => 'required'
 
         ]);
 
@@ -72,7 +70,7 @@ class bookController extends Controller
         $book =  Book::create([
             'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
-            'note' => $request['note'],
+            'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'images' => $images,
@@ -81,7 +79,7 @@ class bookController extends Controller
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
             'title' => $request['title'],
-            'body' => $request['body']
+            'body' => isset($request['body']) ? $request['body'] : ""
 
         ]);
 
@@ -122,14 +120,12 @@ class bookController extends Controller
         $validator = Validator::make($request, [
             'type_id' => 'required| integer',
             'doc_date' => 'required',
-            'note' => 'required',
             'company_id' => 'required| integer',
             'doc_number' => 'required',
             // 'doc_number' => 'required | unique:books',
             'destination' => 'required',
             'action_id' => 'required| integer',
             'title' => 'required',
-            'body' => 'required'
 
         ]);
 
@@ -144,7 +140,7 @@ class bookController extends Controller
         $book =  Book::create([
             'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
-            'note' => $request['note'],
+            'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'state_id' => 3, //if u need default
@@ -152,7 +148,7 @@ class bookController extends Controller
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
             'title' => $request['title'],
-            'body' => $request['body']
+            'body' => isset($request['body']) ? $request['body'] : ""
 
         ]);
 
@@ -370,7 +366,6 @@ class bookController extends Controller
         $validator = Validator::make($request, [
             'type_id' => 'required | integer',
             'doc_date' => 'required',
-            'note' => 'required',
             'company_id' => 'required | integer',
             'doc_number' => 'required',
             'destination' => 'required',
@@ -406,7 +401,7 @@ class bookController extends Controller
         $data = array(
             'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
-            'note' => $request['note'],
+            'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'images' => $images,
@@ -419,7 +414,7 @@ class bookController extends Controller
 
         );
         if ($user->role_id == 1)
-            $data['body'] = $request['body'];
+            $data['body'] = isset($request['body']) ? $request['body'] : "";
         $done =  $book->update($data);
         if ($done)
             return response()->json([
@@ -480,15 +475,12 @@ class bookController extends Controller
         $validator = Validator::make($request['book'], [
             'type_id' => 'required | integer',
             'doc_date' => 'required',
-            'note' => 'required',
             'company_id' => 'required | integer',
             'doc_number' => 'required',
             'destination' => 'required',
             'action_id' => 'required | integer',
             'title' => 'required',
             'state_id' => 'required | integer',
-           
-
         ]);
 
         if ($validator->fails())
@@ -528,7 +520,7 @@ class bookController extends Controller
 
         if (count($user->tokens) > 0) {
             foreach ($user->tokens as $tokens) {
-                $this->NotifyState($tokens->notify_token, $request['book']['title'], $request['book']['state_id'] == 1? true : false);
+                $this->NotifyState($tokens->notify_token, $request['book']['title'], $request['book']['state_id'] == 1 ? true : false);
             }
         }
 

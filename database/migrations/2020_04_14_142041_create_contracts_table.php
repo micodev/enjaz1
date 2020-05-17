@@ -19,7 +19,7 @@ class CreateContractsTable extends Migration
             $table->string('title'); //c_type
             $table->string('doc_number');
             $table->string('doc_date');
-            $table->string('note');
+            $table->string('note')->nullable();
             $table->longText('images')->nullable();
             $table->longText('body')->nullable();
             $table->integer('company_id');
