@@ -20,6 +20,7 @@ class UserController extends Controller
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
 
+
         $validator = Validator::make($request, [
             'username' => 'required',
             'password' => 'required'
@@ -27,17 +28,21 @@ class UserController extends Controller
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
 
         if (Auth::attempt(['username' => $request['username'], 'password' => $request['password']])) {
 
             $user = User::where('username', $request['username'])->with(['role', 'company'])->first();
             if ($user->active) {
-                $token = Token::create([
+                $data = array(
                     'api_token' => Str::random(50),
                     'user_id' => $user->id,
-                ]);
+                );
+
+                if (isset($request['notify_token']))
+                    $data['notify_token'] = $request['notify_token'];
+                $token = Token::create($data);
                 return response()->json([
                     'response' => [
                         'user' => $user,
@@ -48,9 +53,12 @@ class UserController extends Controller
                 return response()->json([
                     'response' => 1
                 ]);
-        } else  return response()->json([
-            'response' => 3
-        ]);
+        } else  return response()->json(
+            [
+                'response' => 3
+            ],
+            401
+        );
     }
 
     public function register(Request $request)
@@ -66,9 +74,8 @@ class UserController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
-
+                'response' => 5
+            ], 400);
         User::create([
             'name' => $request['name'],
             'username' => $request['username'],
@@ -91,8 +98,8 @@ class UserController extends Controller
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $done = User::where('id', $request['id'])->first()->delete();
         if ($done)
             return response()->json([
@@ -101,7 +108,7 @@ class UserController extends Controller
         else
             return response()->json([
                 'response' => 2
-            ]);
+            ], 422);
     }
     public function update(Request $request)
     {
@@ -112,8 +119,8 @@ class UserController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $rules = [
             'name' => 'required',
             'username' => 'required | unique:users,username,' . $request['id'],
@@ -126,8 +133,8 @@ class UserController extends Controller
         $validator = Validator::make($request, $rules);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $fields = [
             'name' => $request['name'],
             'username' => $request['username'],
@@ -148,7 +155,7 @@ class UserController extends Controller
         else
             return response()->json([
                 'response' => 2
-            ]);
+            ], 422);
     }
     public function show()
     {
@@ -183,7 +190,7 @@ class UserController extends Controller
         if ($empty)
             return response()->json([
                 'response' => 4
-            ]);
+            ], 400);
         $users = $users->paginate(20);
         return response()->json([
             'response' => $users

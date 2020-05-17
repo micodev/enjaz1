@@ -30,4 +30,8 @@ class Notify extends Model
     {
         return $this->belongsTo('App\Contract' , 'contract_id', 'id');
     }
+    public function getSeenAttribute($value)
+    {
+      return $value ? true : false;
+    }
 }

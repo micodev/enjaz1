@@ -36,7 +36,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
+   
     public function papers()
     {
       return  $this->hasMany('App\Paper', 'user_id' , 'id');
@@ -69,5 +69,9 @@ class User extends Authenticatable
     public function notify()
     {
       return  $this->hasMany('App\Notify', 'user_id' , 'id');
+    }
+    public function getActiveAttribute($value)
+    {
+      return $value ? true : false;
     }
 }

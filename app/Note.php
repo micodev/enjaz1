@@ -8,7 +8,8 @@ class Note extends Model
 {
     //
     protected $fillable = [
-        'doc_number', 'doc_date', 'title', 'incoming', 'outcoming', 'note', 'images' , 'company_id', 'user_id'
+        'doc_number', 'doc_date', 'title', 'incoming', 'outcoming', 'note', 'images' , 'company_id', 'user_id',
+        'deleted'
     ];
     protected $casts = [
         'images' => 'array',

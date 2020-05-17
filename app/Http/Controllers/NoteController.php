@@ -34,8 +34,8 @@ class noteController extends Controller
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
 
         $images = [];
         if (isset($request['images'])) {
@@ -85,7 +85,9 @@ class noteController extends Controller
 
     public function showNotes()
     {
-        $notes = Note::with(['company', 'user'])->orderBy('created_at', 'desc')->paginate(5);
+        $notes = Note::with(['company', 'user'])
+            ->where('deleted', false)
+            ->orderBy('created_at', 'desc')->paginate(5);
         return response()->json([
             'response' => $notes
         ]);
@@ -100,18 +102,26 @@ class noteController extends Controller
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $id = $request['id'];
-        $note = Note::where('id', $id)->first()->delete();
-        if ($note)
+        $note = Note::where('id', $id)->first();
+        if (!$note)
+            return response()->json([
+                'response' => 2
+            ], 422);
+        $done = $note->update([
+            'deleted' => true
+        ]);
+
+        if ($done)
             return response()->json([
                 'response' => 'done'
             ]);
         else
             return response()->json([
                 'response' => 2
-            ]);
+            ], 422);
     }
 
 
@@ -125,14 +135,14 @@ class noteController extends Controller
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $id = $request['note_id'];
         $note = Note::where('id', $id)->first();
         if (!$note)
-        return response()->json([
-            'response' => 2
-        ]);
+            return response()->json([
+                'response' => 2
+            ], 422);
         $images = $note->images;
 
         $path = $request['img_path'];
@@ -155,7 +165,9 @@ class noteController extends Controller
 
         $empty = true;
 
-        $notes = Note::with(['company', 'user'])->orderBy('created_at', 'desc');
+        $notes = Note::with(['company', 'user'])
+            ->where('deleted', false)
+            ->orderBy('created_at', 'desc');
 
         if (isset($request['company_id'])) {
             $notes = $notes->where('company_id', $request['company_id']);
@@ -190,7 +202,7 @@ class noteController extends Controller
         if ($empty)
             return response()->json([
                 'response' => 4
-            ]);
+            ], 400);
 
 
         $notes = $notes->paginate(5);
@@ -219,8 +231,8 @@ class noteController extends Controller
         //  return $request;
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $note = Note::where('id', $request['id'])->first();
         $new_images = [];
         if ($request['temp'] != null) {
@@ -258,16 +270,15 @@ class noteController extends Controller
 
         );
 
-      $done =  $note->update($data);
+        $done =  $note->update($data);
 
         if ($done)
-        return response()->json([
-            'response' =>$note
-        ]);
-    else
-        return response()->json([
-            'response' => 2
-        ]);
-       
+            return response()->json([
+                'response' => $note
+            ]);
+        else
+            return response()->json([
+                'response' => 2
+            ], 422);
     }
 }

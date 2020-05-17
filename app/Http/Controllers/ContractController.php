@@ -10,9 +10,12 @@ use Validator;
 use File;
 use DateTime;
 use Illuminate\Support\Str;
+use App\Http\Traits\Fcm;
+use App\Notify;
 
 class contractController extends Controller
 {
+    use Fcm;
     private function getUser($token)
     {
         return Token::where('api_token', $token)->first()->user()->first();
@@ -31,12 +34,13 @@ class contractController extends Controller
             'destination' => 'required',
             'action_id' => 'required | integer',
             'title' => 'required',
+            'body' => 'required'
         ]);
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
 
         $images = [];
         if (isset($request['images'])) {
@@ -72,7 +76,8 @@ class contractController extends Controller
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
-            'title' => $request['title']
+            'title' => $request['title'],
+            'body' => $request['body']
 
         ]);
         if ($user->role_id == 3) {
@@ -83,6 +88,17 @@ class contractController extends Controller
                 'role_id' => 2,
 
             ]);
+
+            $users = User::with(['tokens' => function ($q) {
+                $q->where('notify_token', '!=', null);
+            }])->where('role_id', 2)->get();
+            foreach ($users as $user) {
+                if (count($user->tokens) > 0) {
+                    foreach ($user->tokens as $tokens) {
+                        $this->NotifySuper($tokens->notify_token, $request['title']);
+                    }
+                }
+            }
         }
 
         return response()->json([
@@ -105,12 +121,13 @@ class contractController extends Controller
             'destination' => 'required',
             'action_id' => 'required | integer',
             'title' => 'required',
+            'body' => 'required'
         ]);
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
 
         $contract =   Contract::create([
             'type_id' => $request['type_id'],
@@ -122,7 +139,8 @@ class contractController extends Controller
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
-            'title' => $request['title']
+            'title' => $request['title'],
+            'body' => $request['body']
 
         ]);
 
@@ -134,6 +152,17 @@ class contractController extends Controller
                 'role_id' => 1
 
             ]);
+
+            $users = User::with(['tokens' => function ($q) {
+                $q->where('notify_token', '!=', null);
+            }])->where('role_id', 1)->get();
+            foreach ($users as $user) {
+                if (count($user->tokens) > 0) {
+                    foreach ($user->tokens as $tokens) {
+                        $this->NotifyAdmin($tokens->notify_token, $request['title']);
+                    }
+                }
+            }
         }
         return response()->json([
             'response' => 'done'
@@ -141,7 +170,10 @@ class contractController extends Controller
     }
     public function showContracts()
     {
-        $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc')->paginate(5);
+        $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])
+            ->where('deleted', false)
+            ->where('state_id',  1)
+            ->orderBy('created_at', 'desc')->paginate(5);
         return response()->json([
             'response' => $contracts
         ]);
@@ -156,11 +188,20 @@ class contractController extends Controller
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
 
         $id = $request['id'];
-        $done = Contract::where('id', $id)->first()->delete();
+        $contract = Contract::where('id', $id)->first();
+
+        if (!$contract)
+            return response()->json([
+                'response' => 2
+            ], 422);
+
+        $done = $contract->update([
+            'deleted' => true
+        ]);
         if ($done)
             return response()->json([
                 'response' => 'done'
@@ -168,7 +209,7 @@ class contractController extends Controller
         else
             return response()->json([
                 'response' =>  2
-            ]);
+            ], 422);
     }
 
     public function deleteImage(Request $request)
@@ -181,16 +222,16 @@ class contractController extends Controller
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
 
         $id = $request['contract_id'];
 
         $contract = Contract::where('id', $id)->first();
         if (!$contract)
-        return response()->json([
-            'response' => 2
-        ]);
+            return response()->json([
+                'response' => 2
+            ], 422);
         $images = $contract->images;
 
         $path = $request['img_path'];
@@ -209,11 +250,24 @@ class contractController extends Controller
 
     public function search(Request $request)
     {
+        $user = $this->getUser($request->bearerToken());
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
 
         $empty = true;
 
-        $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->orderBy('created_at', 'desc');
+        $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])
+            ->where('deleted', false)
+            ->where('state_id', 1);
+        if ($user->role_id != 1) {
+            $contracts = $contracts->where('type_id', '!=', 3)
+                ->orWhere(function ($query) use ($user) {
+                    $query->Where('type_id', 3)
+                        ->where('user_id', $user->id);
+                });
+        }
+
+        $contracts = $contracts->orderBy('created_at', 'desc');
+
         if (isset($request['company_id'])) {
 
             $contracts = $contracts->where('company_id', $request['company_id']);
@@ -265,7 +319,7 @@ class contractController extends Controller
         if ($empty)
             return response()->json([
                 'response' => 4
-            ]);
+            ], 400);
         $contracts = $contracts->paginate(5);
         return response()->json([
             'response' => $contracts
@@ -293,8 +347,8 @@ class contractController extends Controller
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $contract = Contract::where('id', $request['id'])->first();
         $new_images = [];
         if ($request['temp'] != null) {
@@ -331,6 +385,8 @@ class contractController extends Controller
 
 
         );
+        if ($user->role_id == 1)
+            $data['body'] = $request['body'];
 
         $done =  $contract->update($data);
         if ($done)
@@ -340,11 +396,11 @@ class contractController extends Controller
         else
             return response()->json([
                 'response' =>  2
-            ]);
+            ], 422);
     }
     public function waitContracts()
     {
-        $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->where('state_id', '3')
+        $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->where('state_id', 3)
             ->orderBy('created_at', 'desc')->paginate(5);
         return response()->json([
             'response' => $contracts
@@ -359,25 +415,36 @@ class contractController extends Controller
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
+                'response' => 5
+            ], 400);
+        $done = Contract::where('id', $request['id'])->first()->update([
+            'state_id' => $request['state_id']
+        ]);
+        if ($done)
+            return response()->json([
+                'response' => 'done'
             ]);
-        $contract = Contract::where('id', $request['id'])->first();
-        if (!$contract)
-        return response()->json([
-            'response' => 2
-        ]);
-        $contract->state_id = $request['state_id'];
-        $contract->save();
-        return response()->json([
-            'response' => 'done'
-        ]);
+        else
+            return response()->json([
+                'response' => 2
+            ], 422);
     }
 
-    public function setState(Request $request)
+    public function edit(Request $request)
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
-
         $validator = Validator::make($request, [
+            'contract' => 'required',
+            'user' => 'required'
+
+        ]);
+
+        if ($validator->fails())
+            return response()->json([
+                'response' => 5
+            ], 400);
+
+        $validator = Validator::make($request['contract'], [
             'type_id' => 'required | integer',
             'doc_date' => 'required',
             'note' => 'required',
@@ -387,12 +454,15 @@ class contractController extends Controller
             'destination' => 'required',
             'action_id' => 'required | integer',
             'title' => 'required',
+            'contract' => 'required',
+            'user' => 'required'
+
         ]);
 
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $images = [];
         if ($request['contract']['images'] != null) {
             if (!file_exists(public_path() . '/images/contract')) {
@@ -417,7 +487,16 @@ class contractController extends Controller
         }
         $request['contract']['images'] = $images;
 
-        Notify::where('id', $request['id'])->first()->update(['seen' => $request['seen']]);
+        $notify = Notify::where('id', $request['id'])->first()->update(['seen' => $request['seen']]);
+        $user = User::with(['tokens' => function ($q) {
+            $q->where('notify_token', '!=', null);
+        }])->where('id', $request['user']['id'])->first();
+
+        if (count($user->tokens) > 0) {
+            foreach ($user->tokens as $tokens) {
+                $this->NotifyState($tokens->notify_token, $request['contract']['title'], $request['contract']['state_id'] == 1? true : false);
+            }
+        }
         $contract = Contract::where('id', $request['id']);
         $done =  $contract->update($request['contract']);
         if ($done)
@@ -427,6 +506,6 @@ class contractController extends Controller
         else
             return response()->json([
                 'response' =>  2
-            ]);
+            ], 422);
     }
 }

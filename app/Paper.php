@@ -8,7 +8,8 @@ class Paper extends Model
 {
     //
     protected $fillable = [
-        'title', 'doc_date', 'note', 'company_id', 'images' ,'user_id'
+        'title', 'doc_date', 'note', 'company_id', 'images' ,'user_id',
+        'deleted'
     ];
     protected $casts = [
         'images' => 'array',

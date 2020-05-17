@@ -18,8 +18,31 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::get('/test', 'TableController@test');
+
 Route::middleware(['cors'])->group(function () {
     Route::post('/login/user', 'UserController@login');
+});
+
+Route::middleware(['cors', 'isNotUser', 'isActive'])->group(function () {
+
+    Route::post('/delete/paper', 'PaperController@delete');
+    Route::post('/delete/book', 'BookController@delete');
+    Route::post('/delete/note', 'NoteController@delete');
+    Route::post('/delete/contract', 'ContractController@delete');
+
+    Route::post('/delete/state', 'TableController@deleteState');
+    Route::post('/delete/type', 'TableController@deleteType');
+    Route::post('/delete/role', 'TableController@deleteRole');
+    Route::post('/delete/action', 'TableController@deleteAction');
+    Route::post('/delete/company', 'TableController@deleteCompany');
+
+    // accepts
+    Route::get('/state/books', 'BookController@waitBooks');
+    Route::get('/state/contracts', 'ContractController@waitContracts');
+
+    Route::post('/state/book', 'BookController@changeState');
+    Route::post('/state/contract', 'ContractController@changeState');
 });
 Route::middleware(['cors', 'isActive'])->group(function () {
 
@@ -37,7 +60,7 @@ Route::middleware(['cors', 'isActive'])->group(function () {
 
 
 
-    Route::get('/test', 'TableController@test');
+    
 
     Route::post('/add/paper', 'PaperController@create');
     Route::post('/add/book', 'BookController@create');
@@ -47,10 +70,7 @@ Route::middleware(['cors', 'isActive'])->group(function () {
     Route::post('/create/book', 'BookController@createBook');
     Route::post('/create/contract', 'ContractController@createContract');
 
-    Route::post('/delete/paper', 'PaperController@delete');
-    Route::post('/delete/book', 'BookController@delete');
-    Route::post('/delete/note', 'NoteController@delete');
-    Route::post('/delete/contract', 'ContractController@delete');
+
 
     Route::get('/show/papers', 'PaperController@showPapers');
     Route::get('/show/books', 'BookController@showBooks');
@@ -85,11 +105,6 @@ Route::middleware(['cors', 'isActive'])->group(function () {
 
     //delete 
 
-    Route::post('/delete/state', 'TableController@deleteState');
-    Route::post('/delete/type', 'TableController@deleteType');
-    Route::post('/delete/role', 'TableController@deleteRole');
-    Route::post('/delete/action', 'TableController@deleteAction');
-    Route::post('/delete/company', 'TableController@deleteCompany');
 
     //shows
 
@@ -100,17 +115,12 @@ Route::middleware(['cors', 'isActive'])->group(function () {
     Route::get('/show/companies', 'TableController@showCompanies');
 
 
-    // accepts
-    Route::get('/state/books', 'BookController@waitBooks');
-    Route::get('/state/contracts', 'ContractController@waitContracts');
 
-    Route::post('/state/book', 'BookController@changeState');
-    Route::post('/state/contract', 'ContractController@changeState');
-
-    Route::post('/edit/book', 'BookController@setState');
-    Route::post('/edit/contract', 'ContractController@setState');
 
     // below part one of project
+
+    Route::post('/edit/book', 'BookController@edit');
+    Route::post('/edit/contract', 'ContractController@edit');
 
     Route::get('/show/counts', 'TableController@showCounts');
     Route::get('/show/notify', 'TableController@showNotify');

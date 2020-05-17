@@ -8,7 +8,7 @@ class Token extends Model
 {
     //
     protected $fillable = [
-        'api_token', 'user_id'
+        'api_token', 'user_id', 'notify_token'
     ];
 
     public function user()

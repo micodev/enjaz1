@@ -28,7 +28,7 @@ class CreateTypesTable extends Migration
             ],
             [
                 'id' => 2,
-                'value' => 'عقود شركات',
+                'value' => 'عقود شراكات',
                 'table' => '0'
             ],
             [

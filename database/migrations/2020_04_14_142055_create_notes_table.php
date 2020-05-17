@@ -24,6 +24,7 @@ class CreateNotesTable extends Migration
             $table->integer('company_id');
             $table->longText('images');
             $table->integer('user_id');
+            $table->boolean('deleted')->default(false);
             $table->timestamps();
         });
     }

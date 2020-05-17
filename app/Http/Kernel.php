@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'CheckApiToken' => \App\Http\Middleware\CheckApiToken::class,
         'cors' => \App\Http\Middleware\Cors::class,
         'isActive' => \App\Http\Middleware\IsActive::class,
+        'isNotUser' => \App\Http\Middleware\IsNotUser::class,
     ];
 }

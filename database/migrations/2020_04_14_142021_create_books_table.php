@@ -21,11 +21,13 @@ class CreateBooksTable extends Migration
             $table->string('doc_date');
             $table->string('note');
             $table->longText('images')->nullable();
+            $table->longText('body')->nullable();
             $table->integer('company_id');
             $table->integer('state_id');
             $table->integer('type_id');
             $table->integer('user_id');
             $table->integer('action_id');
+            $table->boolean('deleted')->default(false);
             $table->timestamps();
         });
     }

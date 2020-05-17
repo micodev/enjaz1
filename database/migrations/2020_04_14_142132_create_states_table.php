@@ -30,7 +30,7 @@ class CreateStatesTable extends Migration
             ],
             [
                 'id' => 3,
-                'value' => 'بأنتظار الموافقة'
+                'value' => 'معلق'
             ],
         ]);
     }

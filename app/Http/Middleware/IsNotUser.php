@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use App\Token;
 
-class IsActive
+class IsNotUser
 {
     /**
      * Handle an incoming request.
@@ -16,9 +16,9 @@ class IsActive
      */
     public function handle($request, Closure $next)
     {
-        $active = Token::where('api_token', $request->bearerToken())->first() ?
-        Token::where('api_token', $request->bearerToken())->first()->user()->first()->active : 0;
-        if ($active)
+        $role = Token::where('api_token', $request->bearerToken())->first() ?
+            Token::where('api_token', $request->bearerToken())->first()->user()->first()->role_id : 3;
+        if ($role == 1 || $role == 2)
             return $next($request);
         return response()->json([
             'response' => 1

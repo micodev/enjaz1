@@ -31,9 +31,9 @@ class paperController extends Controller
             'company_id' => 'required | integer'
         ]);
         if ($validator->fails())
-            return response()->json([
-                'errors' => $validator->errors()
-            ]);
+        return response()->json([
+            'response' => 5
+        ], 400);
         $images = [];
         if (isset($request['images'])) {
             if (!file_exists(public_path() . '/images/paper')) {
@@ -74,7 +74,9 @@ class paperController extends Controller
 
     public function showPapers()
     {
-        $papers = Paper::with(['company', 'user'])->orderBy('created_at', 'desc')->paginate(5);
+        $papers = Paper::with(['company', 'user'])
+            ->where('deleted', false)
+            ->orderBy('created_at', 'desc')->paginate(5);
 
         return response()->json([
             'response' => $papers
@@ -89,11 +91,20 @@ class paperController extends Controller
         ]);
 
         if ($validator->fails())
-            return response()->json([
-                'errors' => $validator->errors()
-            ]);
+        return response()->json([
+            'response' => 5
+        ], 400);
         $id = $request['id'];
-        $done = Paper::where('id', $id)->first()->delete();
+        $paper = Paper::where('id', $id)->first();
+        if (!$paper)
+            return response()->json([
+                'response' => 2
+            ], 422);
+
+        $done = $paper->update([
+            'deleted' => true
+        ]);
+
         if ($done)
             return response()->json([
                 'response' => 'done'
@@ -101,7 +112,7 @@ class paperController extends Controller
         else
             return response()->json([
                 'response' => 2
-            ]);
+            ], 422);
     }
 
     public function search(Request $request)
@@ -109,7 +120,9 @@ class paperController extends Controller
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
 
 
-        $papers = Paper::with(['company', 'user'])->orderBy('created_at', 'desc');
+        $papers = Paper::with(['company', 'user'])
+            ->where('deleted', false)
+            ->orderBy('created_at', 'desc');
         $empty = true;
         if (isset($request['company_id'])) {
             $papers = $papers->where('company_id', $request['company_id']);
@@ -132,7 +145,7 @@ class paperController extends Controller
         if ($empty)
             return response()->json([
                 'response' => 4
-            ]);
+            ], 400);
 
         $papers = $papers->paginate(5);
 
@@ -152,16 +165,16 @@ class paperController extends Controller
         ]);
 
         if ($validator->fails())
-            return response()->json([
-                'errors' => $validator->errors()
-            ]);
+        return response()->json([
+            'response' => 5
+        ], 400);
 
         $id = $request['paper_id'];
         $paper = Paper::where('id', $id)->first();
         if (!$paper)
-        return response()->json([
-            'response' => 2
-        ]);
+            return response()->json([
+                'response' => 2
+            ], 422);
         $images = $paper->images;
 
         $path = $request['img_path'];
@@ -191,9 +204,9 @@ class paperController extends Controller
         ]);
 
         if ($validator->fails())
-            return response()->json([
-                'errors' => $validator->errors()
-            ]);
+        return response()->json([
+            'response' => 5
+        ], 400);
         $paper = Paper::where('id', $request['id'])->first();
         $new_images = [];
         if ($request['temp'] != null) {
@@ -233,6 +246,6 @@ class paperController extends Controller
         else
             return response()->json([
                 'response' =>  2
-            ]);
+            ], 422);
     }
 }

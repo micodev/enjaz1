@@ -19,9 +19,12 @@ use App\Contract;
 use App\Note;
 use App\Notify;
 use App\Paper;
+use App\Http\Traits\Fcm;
+use App\User;
 
 class TableController extends Controller
 {
+    use Fcm;
     //
     private function getUser($token)
     {
@@ -37,8 +40,8 @@ class TableController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
 
         $new_id = State::max('id') + 1;
         State::create([
@@ -60,8 +63,8 @@ class TableController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
 
         $new_id = Type::max('id') + 1;
         Type::create([
@@ -83,10 +86,10 @@ class TableController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
 
-        $new_id = Role::max('id');
+        $new_id = Role::max('id') + 1;
         Role::create([
             'id' => $new_id,
             'value' => $request['value']
@@ -105,8 +108,8 @@ class TableController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
 
         $new_id = Action::max('id') + 1;
         Action::create([
@@ -128,10 +131,10 @@ class TableController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
 
-        $new_id = Company::max('id');
+        $new_id = Company::max('id') + 1;
 
         Company::create([
             'id' => $new_id,
@@ -157,8 +160,8 @@ class TableController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $id = $request['state_id'];
         $done =  State::where('id', $id)->first()->delete();
         if ($done)
@@ -180,8 +183,8 @@ class TableController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $id = $request['type_id'];
         $done =  Type::where('id', $id)->first()->delete();
 
@@ -204,8 +207,8 @@ class TableController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $id = $request['role_id'];
         $done =  Role::where('id', $id)->first()->delete();
 
@@ -228,8 +231,8 @@ class TableController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $id = $request['action_id'];
         $done =  Action::where('id', $id)->first()->delete();
 
@@ -251,8 +254,8 @@ class TableController extends Controller
         ]);
         if ($validator->fails())
             return response()->json([
-                'errors' => $validator->errors()
-            ]);
+                'response' => 5
+            ], 400);
         $id = $request['company_id'];
         $done =  Company::where('id', $id)->first()->delete();
 
@@ -379,12 +382,7 @@ class TableController extends Controller
 
     public function test(Request $request)
     {
-        $img = array();
-        return $img;
-        $pathToImage = public_path() . "/images/paper/5.jpg";
-        $te = public_path() . "/images/note/1.jpeg";
 
-        ImageOptimizer::optimize($pathToImage, $te);
-        return "true";
+      
     }
 }

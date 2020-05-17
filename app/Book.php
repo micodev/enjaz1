@@ -9,16 +9,21 @@ class Book extends Model
     //
     protected $fillable = [
         'destination', 'title', 'state_id', 'doc_number', 'doc_date', 'images', 'type_id', 'note', 'company_id',
-        'action_id', 'user_id'
+        'action_id', 'user_id', 'deleted', 'body'
 
     ];
     protected $casts = [
         'images' => 'array',
     ];
-    protected $appends = ['temp'];
+    protected $appends = ['temp' , 'qr'];
+   // protected $hidden = ['deleted'];
     public function getTempAttribute()
     {
         return null;
+    }
+    public function getqrAttribute()
+    {
+        return "/images/qr/valid.png";
     }
     public function state()
     {
