@@ -487,8 +487,7 @@ class bookController extends Controller
             'action_id' => 'required | integer',
             'title' => 'required',
             'state_id' => 'required | integer',
-            'book' => 'required',
-            'user' => 'required'
+           
 
         ]);
 
