@@ -525,7 +525,7 @@ class bookController extends Controller
         $request['book']['images'] = $images;
 
         $notify =  Notify::where('id', $request['id'])->first();
-        $notify->update(['seen' => $request['seen']]);
+        $notify->update(['seen' => true]);
         $user = User::with(['tokens' => function ($q) {
             $q->where('notify_token', '!=', null);
         }])->where('id', $request['user']['id'])->first();
