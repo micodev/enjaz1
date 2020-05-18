@@ -22,15 +22,15 @@ class CreateRolesTable extends Migration
         DB::table('roles')->insert([
             [
                 'id' => 1,
-                'value' => 'admin'
+                'value' => 'مدير'
             ],
             [
                 'id' => 2,
-                'value' => 'supervisor'
+                'value' => 'مشرف'
             ],
             [
                 'id' => 3,
-                'value' => 'official'
+                'value' => 'مدير مكتب'
             ]
         ]);
     }

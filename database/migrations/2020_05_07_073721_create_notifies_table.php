@@ -20,7 +20,7 @@ class CreateNotifiesTable extends Migration
             $table->boolean('seen')->default(false);
             $table->integer('role_id')->nullable();
             $table->integer('user_id');
-            $table->boolean('type');
+            $table->boolean('type'); // false = archive , true = create
             $table->timestamps();
         });
     }

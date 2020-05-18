@@ -16,7 +16,7 @@ class CreateTypesTable extends Migration
         Schema::create('types', function (Blueprint $table) {
             $table->integer('id');
             $table->string('value');
-            $table->string('table');
+            $table->boolean('table'); // false = contract , true = book
             $table->timestamps();
         });
 
@@ -24,27 +24,27 @@ class CreateTypesTable extends Migration
             [
                 'id' => 1,
                 'value' => 'عقود مديريات',
-                'table' => '0'
+                'table' => false
             ],
             [
                 'id' => 2,
                 'value' => 'عقود شراكات',
-                'table' => '0'
+                'table' => false
             ],
             [
                 'id' => 3,
                 'value' => 'سري \ شخصي',
-                'table' => '1'
+                'table' => true
             ],
             [
                 'id' => 4,
                 'value' => 'كتاب عام',
-                'table' => '1'
+                'table' => true
             ],
             [
                 'id' => 5,
                 'value' => 'عروض خدمات',
-                'table' => '1'
+                'table' => true
             ]
            
             

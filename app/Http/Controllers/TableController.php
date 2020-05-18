@@ -361,6 +361,7 @@ class TableController extends Controller
         if ($user->role_id == 3) {
             $notifies = Notify::with(['contract.type', 'book.type', 'user'])->where('seen', true)
                 ->where('user_id', $user->id)
+                ->where('type', true)
                 ->orderBy('updated_at', 'desc');
         } else if ($user->role_id == 2) {
 

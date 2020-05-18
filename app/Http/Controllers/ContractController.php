@@ -12,6 +12,7 @@ use DateTime;
 use Illuminate\Support\Str;
 use App\Http\Traits\Fcm;
 use App\Notify;
+use App\Type;
 
 class contractController extends Controller
 {
@@ -36,6 +37,12 @@ class contractController extends Controller
         ]);
 
         if ($validator->fails())
+            return response()->json([
+                'response' => 5
+            ], 400);
+
+        $type = Type::where('id', $request['type_id'])->first();
+        if ($type->table)
             return response()->json([
                 'response' => 5
             ], 400);
@@ -121,6 +128,12 @@ class contractController extends Controller
         ]);
 
         if ($validator->fails())
+            return response()->json([
+                'response' => 5
+            ], 400);
+
+        $type = Type::where('id', $request['type_id'])->first();
+        if ($type->table)
             return response()->json([
                 'response' => 5
             ], 400);
@@ -258,7 +271,8 @@ class contractController extends Controller
             $contracts = $contracts->where('type_id', '!=', 3)
                 ->orWhere(function ($query) use ($user) {
                     $query->Where('type_id', 3)
-                        ->where('user_id', $user->id);
+                        ->where('user_id', $user->id)
+                        ->where('state_id', 1);
                 });
         }
 
@@ -479,14 +493,16 @@ class contractController extends Controller
         }
         $request['contract']['images'] = $images;
 
-        $notify = Notify::where('id', $request['id'])->first()->update(['seen' => $request['seen']]);
+        $notify = Notify::where('id', $request['id'])->first();
+        $notify->update(['seen' => $request['seen']]);
         $user = User::with(['tokens' => function ($q) {
             $q->where('notify_token', '!=', null);
         }])->where('id', $request['user']['id'])->first();
-
-        if (count($user->tokens) > 0) {
-            foreach ($user->tokens as $tokens) {
-                $this->NotifyState($tokens->notify_token, $request['contract']['title'], $request['contract']['state_id'] == 1 ? true : false);
+        if ($notify->type) {
+            if (count($user->tokens) > 0) {
+                foreach ($user->tokens as $tokens) {
+                    $this->NotifyState($tokens->notify_token, $request['contract']['title'], $request['contract']['state_id'] == 1 ? true : false);
+                }
             }
         }
         $contract = Contract::where('id', $request['id']);
