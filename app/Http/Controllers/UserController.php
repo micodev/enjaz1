@@ -52,7 +52,7 @@ class UserController extends Controller
             } else
                 return response()->json([
                     'response' => 1
-                ]);
+                ], 403);
         } else  return response()->json(
             [
                 'response' => 3
@@ -190,7 +190,7 @@ class UserController extends Controller
         if ($empty)
             return response()->json([
                 'response' => 4
-            ], 400);
+            ], 406);
         $users = $users->paginate(20);
         return response()->json([
             'response' => $users

@@ -201,7 +201,7 @@ class noteController extends Controller
         if ($empty)
             return response()->json([
                 'response' => 4
-            ], 400);
+            ], 406);
 
 
         $notes = $notes->paginate(5);

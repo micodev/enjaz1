@@ -47,8 +47,8 @@ class bookController extends Controller
         $type = Type::where('id', $request['type_id'])->first();
         if (!$type->table)
             return response()->json([
-                'response' => 5
-            ], 400);
+                'response' => 6
+            ], 405);
 
         $images = [];
         if (isset($request['images'])) {
@@ -142,8 +142,8 @@ class bookController extends Controller
         $type = Type::where('id', $request['type_id'])->first();
         if (!$type->table)
             return response()->json([
-                'response' => 5
-            ], 400);
+                'response' => 6
+            ], 405);
 
 
 
@@ -360,7 +360,7 @@ class bookController extends Controller
         if ($empty)
             return response()->json([
                 'response' => 4
-            ], 400);
+            ], 406);
         $books = $books->paginate(5);
         return response()->json([
             'response' => $books

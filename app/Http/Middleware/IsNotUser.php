@@ -21,7 +21,7 @@ class IsNotUser
         if ($role == 1 || $role == 2)
             return $next($request);
         return response()->json([
-            'response' => 1
+            'response' => 3
         ], 401);
     }
 }

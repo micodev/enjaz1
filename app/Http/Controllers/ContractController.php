@@ -44,8 +44,8 @@ class contractController extends Controller
         $type = Type::where('id', $request['type_id'])->first();
         if ($type->table)
             return response()->json([
-                'response' => 5
-            ], 400);
+                'response' => 6
+            ], 405);
 
         $images = [];
         if (isset($request['images'])) {
@@ -135,8 +135,8 @@ class contractController extends Controller
         $type = Type::where('id', $request['type_id'])->first();
         if ($type->table)
             return response()->json([
-                'response' => 5
-            ], 400);
+                'response' => 6
+            ], 405);
 
         $contract =   Contract::create([
             'type_id' => $request['type_id'],
@@ -329,7 +329,7 @@ class contractController extends Controller
         if ($empty)
             return response()->json([
                 'response' => 4
-            ], 400);
+            ], 406);
         $contracts = $contracts->paginate(5);
         return response()->json([
             'response' => $contracts

@@ -24,7 +24,7 @@ Route::middleware(['cors'])->group(function () {
     Route::post('/login/user', 'UserController@login');
 });
 
-Route::middleware(['cors', 'isNotUser', 'isActive'])->group(function () {
+Route::middleware(['cors', 'isActive', 'isNotUser'])->group(function () {
 
     Route::post('/delete/paper', 'PaperController@delete');
     Route::post('/delete/book', 'BookController@delete');
@@ -60,7 +60,7 @@ Route::middleware(['cors', 'isActive'])->group(function () {
 
 
 
-    
+
 
     Route::post('/add/paper', 'PaperController@create');
     Route::post('/add/book', 'BookController@create');

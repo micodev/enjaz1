@@ -16,12 +16,23 @@ class IsActive
      */
     public function handle($request, Closure $next)
     {
+
+        $token = $request->bearerToken() ? $request->bearerToken() : null;
+        if (!$token)
+            return response()->json([
+                'response' => 3
+            ], 401);
         $active = Token::where('api_token', $request->bearerToken())->first() ?
-        Token::where('api_token', $request->bearerToken())->first()->user()->first()->active : 0;
+            Token::where('api_token', $request->bearerToken())->first()->user()->first()->active : null;
+        if (is_null($active))
+            return response()->json([
+                'response' => 3
+            ], 401);
         if ($active)
             return $next($request);
-        return response()->json([
-            'response' => 1
-        ], 401);
+        else
+            return response()->json([
+                'response' => 1
+            ], 403);
     }
 }
