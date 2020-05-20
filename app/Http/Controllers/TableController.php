@@ -359,26 +359,52 @@ class TableController extends Controller
         $user = $this->getUser($request->bearerToken());
         $notifies = null;
         if ($user->role_id == 3) {
-            $notifies = Notify::with(['contract.type', 'book.type', 'user'])->where('seen', true)
+            $notifies = Notify::with(['contract.type', 'book.type', 'user'])->where('notify_type', true)
                 ->where('user_id', $user->id)
                 ->where('type', true)
+                ->where('seen', false)
                 ->orderBy('updated_at', 'desc');
         } else if ($user->role_id == 2) {
 
             $notifies = Notify::with(['contract.type', 'book.type', 'user'])->where('role_id', $user->role_id)
-                ->where('seen', false)
+                ->where('notify_type', false)->where('seen', false)
                 ->orWhere(function ($query) use ($user) {
                     $query->where('user_id', $user->id)
-                        ->Where('seen', true);
+                        ->Where('notify_type', true)
+                        ->where('seen', false);
                 })->orderBy('updated_at', 'desc');
         } else {
             $notifies = Notify::with(['contract.type', 'book.type', 'user'])->where('role_id', $user->role_id)
-                ->where('seen', false)->orderBy('updated_at', 'desc');
+                ->where('seen', false)
+                ->where('notify_type', false)
+                ->orderBy('updated_at', 'desc');
         }
         $notifies = $notifies->paginate(5);
         return response()->json([
             'response' => $notifies
         ]);
+    }
+
+    public function notifySeen(Request $request)
+    {
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $validator = Validator::make($request, [
+            'id' => 'required',
+        ]);
+        if ($validator->fails())
+            return response()->json([
+                'response' => 5
+            ], 400);
+
+        $done = Notify::where('id', $request['id'])->first()->update(['seen' => true]);
+        if ($done)
+            return response()->json([
+                'response' => 'done'
+            ]);
+        else
+            return response()->json([
+                'response' =>  2
+            ], 422);
     }
     public function logout(Request $request)
     {

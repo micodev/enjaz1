@@ -96,6 +96,7 @@ class bookController extends Controller
                 'user_id' => $user->id,
                 'type' => false,
                 'role_id' => 2,
+                'notify_type' => false
 
             ]);
 
@@ -168,7 +169,8 @@ class bookController extends Controller
                 'book_id' => $book->id,
                 'user_id' => $user->id,
                 'type' => true,
-                'role_id' => 1
+                'role_id' => 1,
+                'notify_type' => false
 
             ]);
 
@@ -525,10 +527,26 @@ class bookController extends Controller
         $request['book']['images'] = $images;
 
         $notify =  Notify::where('id', $request['id'])->first();
+        if ($notify->seen)
+            return response()->json([
+                'response' => 2
+            ], 422);
+
         $notify->update(['seen' => true]);
+        if (!$notify->notify_type && $notify->type) {
+            Notify::create([
+                'book_id' => $notify->book_id,
+                'user_id' => $notify->user_id,
+                'type' => $notify->type,
+                'role_id' => $notify->role_id,
+                'notify_type' => true
+
+            ]);
+        }
         $user = User::with(['tokens' => function ($q) {
             $q->where('notify_token', '!=', null);
         }])->where('id', $request['user']['id'])->first();
+
         if ($notify->type) {
             if (count($user->tokens) > 0) {
                 foreach ($user->tokens as $tokens) {

@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Notify extends Model
 {
     protected $fillable = [
-        'book_id', 'contract_id', 'seen', 'role_id', 'user_id', 'type'
+        'book_id', 'contract_id', 'seen', 'role_id', 'user_id', 'type', 'notify_type'
     ];
     protected $hidden = [
-        'book_id', 'contract_id', 'role_id', 'user_id'
+        'book_id', 'contract_id', 'role_id', 'user_id', 'notify_type'
     ];
 
 

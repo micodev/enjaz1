@@ -21,6 +21,7 @@ class CreateNotifiesTable extends Migration
             $table->integer('role_id')->nullable();
             $table->integer('user_id');
             $table->boolean('type'); // false = archive , true = create
+            $table->boolean('notify_type'); // false = send , true = recieve
             $table->timestamps();
         });
     }

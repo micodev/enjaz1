@@ -91,6 +91,7 @@ class contractController extends Controller
                 'user_id' => $user->id,
                 'type' => false,
                 'role_id' => 2,
+                'notify_type' => false
 
             ]);
 
@@ -158,7 +159,8 @@ class contractController extends Controller
                 'contract_id' => $contract->id,
                 'user_id' => $user->id,
                 'type' => true,
-                'role_id' => 1
+                'role_id' => 1,
+                'notify_type' => false
 
             ]);
 
@@ -494,7 +496,21 @@ class contractController extends Controller
         $request['contract']['images'] = $images;
 
         $notify = Notify::where('id', $request['id'])->first();
+        if ($notify->seen)
+            return response()->json([
+                'response' => 2
+            ], 422);
         $notify->update(['seen' => true]);
+        if (!$notify->notify_type && $notify->type) {
+            Notify::create([
+                'contract_id' => $notify->contract_id,
+                'user_id' => $notify->user_id,
+                'type' => $notify->type,
+                'role_id' => $notify->role_id,
+                'notify_type' => true
+
+            ]);
+        }
         $user = User::with(['tokens' => function ($q) {
             $q->where('notify_token', '!=', null);
         }])->where('id', $request['user']['id'])->first();
@@ -505,7 +521,7 @@ class contractController extends Controller
                 }
             }
         }
-        $contract = Contract::where('id', $request['id']);
+        $contract = Contract::where('id', $request['contract']['id'])->first();
         $done =  $contract->update($request['contract']);
         if ($done)
             return response()->json([
