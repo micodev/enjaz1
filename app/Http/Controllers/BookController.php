@@ -542,18 +542,20 @@ class bookController extends Controller
                 'notify_type' => true
 
             ]);
-        }
-        $user = User::with(['tokens' => function ($q) {
-            $q->where('notify_token', '!=', null);
-        }])->where('id', $request['user']['id'])->first();
+            $user = User::with(['tokens' => function ($q) {
+                $q->where('notify_token', '!=', null);
+            }])->where('id', $request['user']['id'])->first();
 
-        if ($notify->type) {
-            if (count($user->tokens) > 0) {
-                foreach ($user->tokens as $tokens) {
-                    $this->NotifyState($tokens->notify_token, $request['book']['title'], $request['book']['state_id'] == 1 ? true : false);
+            if ($notify->type)
+                if (count($user->tokens) > 0) {
+                    foreach ($user->tokens as $tokens) {
+                        $this->NotifyState($tokens->notify_token, $request['book']['title'], $request['book']['state_id'] == 1 ? true : false);
+                    }
                 }
-            }
         }
+
+
+
 
 
         $book = Book::where('id', $request['book']['id'])->first();

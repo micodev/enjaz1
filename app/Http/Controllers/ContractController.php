@@ -510,17 +510,18 @@ class contractController extends Controller
                 'notify_type' => true
 
             ]);
-        }
-        $user = User::with(['tokens' => function ($q) {
-            $q->where('notify_token', '!=', null);
-        }])->where('id', $request['user']['id'])->first();
-        if ($notify->type) {
+
+            $user = User::with(['tokens' => function ($q) {
+                $q->where('notify_token', '!=', null);
+            }])->where('id', $request['user']['id'])->first();
+
             if (count($user->tokens) > 0) {
                 foreach ($user->tokens as $tokens) {
                     $this->NotifyState($tokens->notify_token, $request['contract']['title'], $request['contract']['state_id'] == 1 ? true : false);
                 }
             }
         }
+
         $contract = Contract::where('id', $request['contract']['id'])->first();
         $done =  $contract->update($request['contract']);
         if ($done)
