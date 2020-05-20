@@ -22,6 +22,7 @@ Route::get('/test', 'TableController@test');
 
 Route::middleware(['cors'])->group(function () {
     Route::post('/login/user', 'UserController@login');
+    Route::get('/logout/user', 'UserController@logout');
 });
 
 Route::middleware(['cors', 'isActive', 'isNotUser'])->group(function () {
@@ -126,5 +127,5 @@ Route::middleware(['cors', 'isActive'])->group(function () {
     Route::get('/show/notify', 'TableController@showNotify');
     Route::post('/seen/notify', 'TableController@notifySeen');
 
-    Route::get('/logout/user', 'TableController@logout');
+ 
 });

@@ -196,4 +196,19 @@ class UserController extends Controller
             'response' => $users
         ]);
     }
+
+    public function logout(Request $request)
+    {
+        if (!$request->bearerToken())
+            return response()->json([
+                'response' => 3
+            ], 401);
+
+
+        Token::where('api_token', $request->bearerToken())->first() ?
+            Token::where('api_token', $request->bearerToken())->first()->delete() : null;
+        return response()->json([
+            'response' => 'done'
+        ]);
+    }
 }

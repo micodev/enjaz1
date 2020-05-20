@@ -408,13 +408,14 @@ class TableController extends Controller
     }
     public function logout(Request $request)
     {
-        $token = Token::where('api_token', $request->bearerToken())->first();
-        if (!$token)
+        if (!$request->bearerToken())
             return response()->json([
                 'response' => 3
             ], 401);
 
-        $token->delete();
+
+        Token::where('api_token', $request->bearerToken())->first() ?
+            Token::where('api_token', $request->bearerToken())->first()->delete() : null;
         return response()->json([
             'response' => 'done'
         ]);
