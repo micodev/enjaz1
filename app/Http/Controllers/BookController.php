@@ -80,7 +80,7 @@ class bookController extends Controller
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
             'images' => $images,
-            'state_id' => 3,
+            'state_id' => $user->role_id != 3 ? 1 : 3,
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
@@ -153,7 +153,7 @@ class bookController extends Controller
             'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
-            'state_id' => 3, //if u need default
+            'state_id' => $user->role_id == 1 ? 1 : 3, //if u need default
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],

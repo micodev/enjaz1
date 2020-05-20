@@ -124,4 +124,6 @@ Route::middleware(['cors', 'isActive'])->group(function () {
 
     Route::get('/show/counts', 'TableController@showCounts');
     Route::get('/show/notify', 'TableController@showNotify');
+
+    Route::post('/logout/user', 'TableController@logout');
 });

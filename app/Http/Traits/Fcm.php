@@ -9,6 +9,7 @@ trait Fcm
 
     public function NotifyAdmin($token, $body)
     {
+        $body = "العنوان : " . $body;
         $headers = [
             'Content-Type' => 'application/json',
             'Authorization' => 'key=AAAAp9RICsU:APA91bE2DSy5KnT88XoURF3rx9eEhpFQaTusJxddwhF15AB7M86YbOyPB5tEM2b9Mf2utX_XJhpeDsCwgnqK3_0R18j1yACLk5bw9wshchRU9T8DrEgpXBMquCkscb-37iKkG0Qtbw9V',
@@ -42,6 +43,7 @@ trait Fcm
     }
     public function NotifySuper($token, $body)
     {
+        $body = "العنوان : " . $body;
         $headers = [
             'Content-Type' => 'application/json',
             'Authorization' => 'key=AAAAp9RICsU:APA91bE2DSy5KnT88XoURF3rx9eEhpFQaTusJxddwhF15AB7M86YbOyPB5tEM2b9Mf2utX_XJhpeDsCwgnqK3_0R18j1yACLk5bw9wshchRU9T8DrEgpXBMquCkscb-37iKkG0Qtbw9V',
@@ -77,6 +79,7 @@ trait Fcm
         $title = "";
         $color = "";
         $icon = "";
+        $body = "العنوان : " . $body;
         if ($state) {
             $title = "تم الموافقة على المستند";
             $color = "green";

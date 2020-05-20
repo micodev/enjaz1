@@ -380,7 +380,19 @@ class TableController extends Controller
             'response' => $notifies
         ]);
     }
+    public function logout(Request $request)
+    {
+        $token = Token::where('api_token', $request->bearerToken())->first();
+        if (!$token)
+            return response()->json([
+                'response' => 3
+            ], 401);
 
+        $token->delete();
+        return response()->json([
+            'response' => 'done'
+        ]);
+    }
     public function test(Request $request)
     {
         $token = $request->bearerToken() ? $request->bearerToken() : null;
@@ -390,12 +402,12 @@ class TableController extends Controller
             ], 401);
         $active = Token::where('api_token', $request->bearerToken())->first() ?
             Token::where('api_token', $request->bearerToken())->first()->user()->first()->active : null;
-           // return Token::where('api_token', $request->bearerToken())->first();
-          // return Token::where('api_token', $request->bearerToken())->first()->user()->first()->active;
-           if (is_null($active))
-           return response()->json([
-               'response' => 3
-           ], 401);
+        // return Token::where('api_token', $request->bearerToken())->first();
+        // return Token::where('api_token', $request->bearerToken())->first()->user()->first()->active;
+        if (is_null($active))
+            return response()->json([
+                'response' => 3
+            ], 401);
         if ($active)
             return "active";
         else
