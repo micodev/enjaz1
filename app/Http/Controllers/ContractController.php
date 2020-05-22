@@ -139,12 +139,35 @@ class contractController extends Controller
                 'response' => 6
             ], 405);
 
+        $images = [];
+        if (isset($request['images'])) {
+            if (!file_exists(public_path() . '/images/contract')) {
+                File::makeDirectory(public_path() . '/images/contract');
+            }
+            $names = [];
+            foreach ($request['images'] as $image) {
+
+                $image = explode(',', $image)[1];
+
+                $imgdata = base64_decode($image);
+
+                $f = finfo_open();
+                $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
+                $type = explode('/', $mime_type)[1];
+                $filename = time() . Str::random(2) . '.' . $type;
+                File::put(public_path() . '/images/contract/' . $filename, $imgdata);
+
+                array_push($names, '/images/contract/' . $filename);
+            }
+            $images = $names;
+        }
         $contract =   Contract::create([
             'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
             'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
+            'images' => $images,
             'state_id' => $user->role_id == 1 ? 1 : 3,
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
@@ -471,13 +494,11 @@ class contractController extends Controller
             return response()->json([
                 'response' => 5
             ], 400);
-        $images = [];
-        if ($request['contract']['images'] != null) {
-            if (!file_exists(public_path() . '/images/contract')) {
-                File::makeDirectory(public_path() . '/images/contract');
-            }
+        $contract = Contract::where('id', $request['id'])->first();
+        $new_images = [];
+        if ($request['contract']['temp'] != null) {
             $names = [];
-            foreach ($request['contract']['images'] as $image) {
+            foreach ($request['contract']['temp'] as $image) {
 
                 $image = explode(',', $image)[1];
 
@@ -491,9 +512,10 @@ class contractController extends Controller
 
                 array_push($names, '/images/contract/' . $filename);
             }
-            $images = $names;
+            $new_images = $names;
         }
-        $request['contract']['images'] = $images;
+        $images = array_merge($contract->images, $new_images);
+        $request['contract']['images'] = $new_images;
 
         $notify = Notify::where('id', $request['id'])->first();
         if ($notify->seen)
@@ -521,8 +543,6 @@ class contractController extends Controller
                 }
             }
         }
-
-        $contract = Contract::where('id', $request['contract']['id'])->first();
         $done =  $contract->update($request['contract']);
         if ($done)
             return response()->json([

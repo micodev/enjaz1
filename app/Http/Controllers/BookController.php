@@ -145,6 +145,28 @@ class bookController extends Controller
             return response()->json([
                 'response' => 6
             ], 405);
+        $images = [];
+        if (isset($request['images'])) {
+            if (!file_exists(public_path() . '/images/book')) {
+                File::makeDirectory(public_path() . '/images/book');
+            }
+            $names = [];
+            foreach ($request['images'] as $image) {
+
+                $image = explode(',', $image)[1];
+
+                $imgdata = base64_decode($image);
+
+                $f = finfo_open();
+                $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
+                $type = explode('/', $mime_type)[1];
+                $filename = time() . Str::random(2) . '.' . $type;
+                File::put(public_path() . '/images/book/' . $filename, $imgdata);
+
+                array_push($names, '/images/book/' . $filename);
+            }
+            $images = $names;
+        }
 
 
 
@@ -154,7 +176,8 @@ class bookController extends Controller
             'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
             'user_id' => $user->id,
-            'state_id' => $user->role_id == 1 ? 1 : 3, //if u need default
+            'images' => $images,
+            'state_id' => $user->role_id == 1 ? 1 : 3,
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
             'action_id' => $request['action_id'],
@@ -372,10 +395,7 @@ class bookController extends Controller
     public function update(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-        // $user = User::where('id', '1')->first();
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
-
-
         $validator = Validator::make($request, [
             'type_id' => 'required | integer',
             'doc_date' => 'required',
@@ -500,19 +520,15 @@ class bookController extends Controller
             return response()->json([
                 'response' => 5
             ], 400);
+        $book = Book::where('id', $request['book']['id'])->first();
+        $new_images = [];
+        if ($request['book']['temp'] != null) {
 
-        $images = [];
-        if ($request['book']['images'] != null) {
-            if (!file_exists(public_path() . '/images/book')) {
-                File::makeDirectory(public_path() . '/images/book');
-            }
             $names = [];
-            foreach ($request['book']['images'] as $image) {
+            foreach ($request['book']['temp'] as $image) {
 
                 $image = explode(',', $image)[1];
-
                 $imgdata = base64_decode($image);
-
                 $f = finfo_open();
                 $mime_type = finfo_buffer($f, $imgdata, FILEINFO_MIME_TYPE);
                 $type = explode('/', $mime_type)[1];
@@ -521,8 +537,9 @@ class bookController extends Controller
 
                 array_push($names, '/images/book/' . $filename);
             }
-            $images = $names;
+            $new_images = $names;
         }
+        $images = array_merge($book->images, $new_images);
 
         $request['book']['images'] = $images;
 
@@ -554,11 +571,6 @@ class bookController extends Controller
                 }
         }
 
-
-
-
-
-        $book = Book::where('id', $request['book']['id'])->first();
         $done =  $book->update($request['book']);
         if ($done)
             return response()->json([

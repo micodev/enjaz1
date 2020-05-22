@@ -422,29 +422,8 @@ class TableController extends Controller
     }
     public function test(Request $request)
     {
-        $token = $request->bearerToken() ? $request->bearerToken() : null;
-        if (!$token)
-            return response()->json([
-                'response' => 3
-            ], 401);
-        $active = Token::where('api_token', $request->bearerToken())->first() ?
-            Token::where('api_token', $request->bearerToken())->first()->user()->first()->active : null;
-        // return Token::where('api_token', $request->bearerToken())->first();
-        // return Token::where('api_token', $request->bearerToken())->first()->user()->first()->active;
-        if (is_null($active))
-            return response()->json([
-                'response' => 3
-            ], 401);
-        if ($active)
-            return "active";
-        else
-            return response()->json([
-                'response' => 1
-            ], 403);
-
-        if ($active == 3)
-            return response()->json([
-                'response' => 3
-            ], 401);
+       
+       $book = Book::findOrFail([1,2]);
+       return $book;
     }
 }
