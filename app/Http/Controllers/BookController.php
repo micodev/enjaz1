@@ -328,14 +328,11 @@ class bookController extends Controller
             ->where('state_id', 1);
 
         if ($user->role_id != 1) {
-            $books = $books->where('type_id', '!=', 3)
-                ->orWhere(function ($query) use ($user, $request) {
-                    $query->Where('type_id', 3)
-                        ->where('user_id', $user->id)
-                        ->where('state_id', 1);
-                    if (isset($request['action_id']))
-                        $query->where('action_id', $request['action_id']);
-                });
+            $books = $books->Where(function ($query) use ($user) {
+                $query->where('type_id', '!=', 3)->orWhere('type_id', 3)
+                    ->where('user_id', $user->id)
+                    ->where('state_id', 1);
+            });
         }
 
         $books = $books->orderBy('created_at', 'desc');
