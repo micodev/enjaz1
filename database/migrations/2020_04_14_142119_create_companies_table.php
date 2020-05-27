@@ -22,11 +22,11 @@ class CreateCompaniesTable extends Migration
         DB::table('companies')->insert([
             [
                 'id' => 1,
-                'value' => 'Qicard'
+                'value' => 'كي كارد'
             ],
             [
                 'id' => 2,
-                'value' => 'Enjaz'
+                'value' => 'انجاز'
             ],
             
         ]);

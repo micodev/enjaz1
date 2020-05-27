@@ -207,7 +207,7 @@ class contractController extends Controller
         $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])
             ->where('deleted', false)
             ->where('state_id',  1)
-            ->orderBy('created_at', 'desc')->paginate(5);
+            ->orderBy('created_at', 'desc')->paginate(15);
         return response()->json([
             'response' => $contracts
         ]);
@@ -292,14 +292,7 @@ class contractController extends Controller
         $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])
             ->where('deleted', false)
             ->where('state_id', 1);
-        if ($user->role_id != 1) {
-            $contracts = $contracts->where('type_id', '!=', 3)
-                ->orWhere(function ($query) use ($user) {
-                    $query->Where('type_id', 3)
-                        ->where('user_id', $user->id)
-                        ->where('state_id', 1);
-                });
-        }
+       
 
         $contracts = $contracts->orderBy('created_at', 'desc');
 
@@ -355,7 +348,7 @@ class contractController extends Controller
             return response()->json([
                 'response' => 4
             ], 406);
-        $contracts = $contracts->paginate(5);
+        $contracts = $contracts->paginate(15);
         return response()->json([
             'response' => $contracts
         ]);
@@ -435,7 +428,7 @@ class contractController extends Controller
     public function waitContracts()
     {
         $contracts = Contract::with(['company', 'type', 'state', 'user', 'action'])->where('state_id', 3)
-            ->orderBy('created_at', 'desc')->paginate(5);
+            ->orderBy('created_at', 'desc')->paginate(15);
         return response()->json([
             'response' => $contracts
         ]);
@@ -494,7 +487,7 @@ class contractController extends Controller
             return response()->json([
                 'response' => 5
             ], 400);
-        $contract = Contract::where('id', $request['id'])->first();
+        $contract = Contract::where('id', $request['contract']['id'])->first();
         $new_images = [];
         if ($request['contract']['temp'] != null) {
             $names = [];

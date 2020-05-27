@@ -75,7 +75,7 @@ class paperController extends Controller
     {
         $papers = Paper::with(['company', 'user'])
             ->where('deleted', false)
-            ->orderBy('created_at', 'desc')->paginate(5);
+            ->orderBy('created_at', 'desc')->paginate(15);
 
         return response()->json([
             'response' => $papers
@@ -146,7 +146,7 @@ class paperController extends Controller
                 'response' => 4
             ], 400);
 
-        $papers = $papers->paginate(5);
+        $papers = $papers->paginate(15);
 
         return response()->json([
             'response' => $papers

@@ -226,7 +226,7 @@ class bookController extends Controller
             $books = Book::with(['company', 'type', 'state', 'user', 'action'])
                 ->where('deleted', false)
                 ->where('state_id', 1)
-                ->orderBy('created_at', 'desc')->paginate(5);
+                ->orderBy('created_at', 'desc')->paginate(15);
             return response()->json([
                 'response' => $books
             ]);
@@ -237,9 +237,10 @@ class bookController extends Controller
                 ->where('type_id', '!=', 3)
                 ->orWhere(function ($query) use ($user) {
                     $query->Where('type_id', 3)
-                        ->where('user_id', $user->id);
+                        ->where('user_id', $user->id)
+                        ->where('state_id', 1);
                 })
-                ->orderBy('created_at', 'desc')->paginate(5);
+                ->orderBy('created_at', 'desc')->paginate(15);
             return response()->json([
                 'response' => $books
             ]);
@@ -328,10 +329,12 @@ class bookController extends Controller
 
         if ($user->role_id != 1) {
             $books = $books->where('type_id', '!=', 3)
-                ->orWhere(function ($query) use ($user) {
+                ->orWhere(function ($query) use ($user, $request) {
                     $query->Where('type_id', 3)
                         ->where('user_id', $user->id)
                         ->where('state_id', 1);
+                    if (isset($request['action_id']))
+                        $query->where('action_id', $request['action_id']);
                 });
         }
 
@@ -386,7 +389,7 @@ class bookController extends Controller
             return response()->json([
                 'response' => 4
             ], 406);
-        $books = $books->paginate(5);
+        $books = $books->paginate(15);
         return response()->json([
             'response' => $books
         ]);
@@ -462,7 +465,7 @@ class bookController extends Controller
     public function waitBooks()
     {
         $books = Book::with(['company', 'type', 'state', 'user', 'action'])->where('state_id', 3)
-            ->orderBy('created_at', 'desc')->paginate(5);
+            ->orderBy('created_at', 'desc')->paginate(15);
         return response()->json([
             'response' => $books
         ]);

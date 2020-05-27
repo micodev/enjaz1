@@ -86,7 +86,7 @@ class noteController extends Controller
     {
         $notes = Note::with(['company', 'user'])
             ->where('deleted', false)
-            ->orderBy('created_at', 'desc')->paginate(5);
+            ->orderBy('created_at', 'desc')->paginate(15);
         return response()->json([
             'response' => $notes
         ]);
@@ -204,7 +204,7 @@ class noteController extends Controller
             ], 406);
 
 
-        $notes = $notes->paginate(5);
+        $notes = $notes->paginate(15);
         return response()->json([
             'response' => $notes
         ]);

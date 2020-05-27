@@ -44,6 +44,11 @@ Route::middleware(['cors', 'isActive', 'isNotUser'])->group(function () {
 
     Route::post('/state/book', 'BookController@changeState');
     Route::post('/state/contract', 'ContractController@changeState');
+
+    Route::post('/register/user', 'UserController@register');
+    Route::post('/delete/user', 'UserController@delete');
+    Route::put('/update/user', 'UserController@update');
+    Route::get('/show/users', 'UserController@show');
 });
 Route::middleware(['cors', 'isActive'])->group(function () {
 
@@ -53,10 +58,7 @@ Route::middleware(['cors', 'isActive'])->group(function () {
 
     // below 6 routes about user
 
-    Route::post('/register/user', 'UserController@register');
-    Route::post('/delete/user', 'UserController@delete');
-    Route::put('/update/user', 'UserController@update');
-    Route::get('/show/users', 'UserController@show');
+  
     Route::post('/search/users', 'UserController@search');
 
 
