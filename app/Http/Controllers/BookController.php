@@ -436,11 +436,9 @@ class bookController extends Controller
             'doc_date' => $request['doc_date'],
             'note' => isset($request['note']) ? $request['note'] : "",
             'company_id' => $request['company_id'],
-            'user_id' => $user->id,
             'images' => $images,
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
-            'action_id' => $request['action_id'],
             'title' => $request['title'],
             'state_id' => $request['state_id']
 
@@ -570,8 +568,19 @@ class bookController extends Controller
                     }
                 }
         }
+        $data = $request['book'];
+        $done =  $book->update([
+            'destination' => $data['destination'],
+            'title' => $data['title'],
+            'doc_number' => $data['doc_number'],
+            'doc_date' => $data['doc_date'],
+            'images' => $data['images'],
+            'note' => $data['note'],
+            'body' => $data['body'],
+            'state_id' => $data['state_id'],
+            'type_id' => $data['type_id'],
 
-        $done =  $book->update($request['book']);
+        ]);
         if ($done)
             return response()->json([
                 'response' =>  $book

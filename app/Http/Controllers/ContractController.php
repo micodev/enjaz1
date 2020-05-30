@@ -398,16 +398,12 @@ class contractController extends Controller
         }
         $images = array_merge($contract->images, $new_images);
         $data = array(
-            'type_id' => $request['type_id'],
             'doc_date' => $request['doc_date'],
             'note' => isset($request['note']) ? $request['note'] : "",
-            'company_id' => $request['company_id'],
-            'user_id' => $user->id,
             'images' => $images,
             'state_id' => $request['state_id'],
             'destination' => $request['destination'],
             'doc_number' => $request['doc_number'],
-            'action_id' => $request['action_id'],
             'title' => $request['title']
 
 
@@ -536,7 +532,16 @@ class contractController extends Controller
                 }
             }
         }
-        $done =  $contract->update($request['contract']);
+        $data = $request['contract'];
+        $done =  $contract->update([
+            'doc_date' => $data['doc_date'],
+            'note' => $data['note'],
+            'images' => $data['images'],
+            'state_id' => $data['state_id'],
+            'destination' => $data['destination'],
+            'doc_number' => $data['doc_number'],
+            'title' => $data['title']
+        ]);
         if ($done)
             return response()->json([
                 'response' =>  $contract
