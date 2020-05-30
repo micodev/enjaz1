@@ -24,7 +24,7 @@ class noteController extends Controller
         $validator = Validator::make($request, [
             'doc_date' => 'required',
             'company_id' => 'required | integer',
-            'doc_number' => 'required | integer',
+            'doc_number' => 'required',
             // 'doc_number' => 'required | unique:notes',
             'outcoming' => 'required',
             'incoming' => 'required',
