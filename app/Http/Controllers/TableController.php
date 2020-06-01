@@ -532,6 +532,8 @@ class TableController extends Controller
 
 
         $merged = $merged->sortByDesc('created_at')->values()->all();
+        if (isset($request['company_id']))
+        $merged = collect($merged)->where('company_id' , $request['company_id']);
         $merged = $this->myPaginate($merged, 15);
         return response()->json([
             'response' => $merged
@@ -540,7 +542,8 @@ class TableController extends Controller
     public function test(Request $request)
     {
 
-        $book = Book::findOrFail([1, 2]);
+        $book = Book::where('deleted', false) ->get();
+        $book = collect($book)->where('id', 11);
         return $book;
     }
     public function myPaginate($items, $perPage = 5, $page = null, $options = [])
