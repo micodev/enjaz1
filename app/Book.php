@@ -15,11 +15,15 @@ class Book extends Model
     protected $casts = [
         'images' => 'array',
     ];
-    protected $appends = ['temp' , 'qr'];
-   // protected $hidden = ['deleted'];
+    protected $appends = ['temp' , 'qr', 'doc_type'];
+   
     public function getTempAttribute()
     {
         return null;
+    }
+    public function getDocTypeAttribute()
+    {
+        return "Book";
     }
     public function getqrAttribute()
     {

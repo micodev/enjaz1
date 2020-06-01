@@ -220,8 +220,7 @@ class bookController extends Controller
     public function showBooks(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-        // return all books if admin 
-        // return secrt book if user or super
+       
         if ($user->role_id == 1) {
             $books = Book::with(['company', 'type', 'state', 'user', 'action'])
                 ->where('deleted', false)

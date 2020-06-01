@@ -21,6 +21,10 @@ use App\Notify;
 use App\Paper;
 use App\Http\Traits\Fcm;
 use App\User;
+use DB;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class TableController extends Controller
 {
@@ -420,10 +424,52 @@ class TableController extends Controller
             'response' => 'done'
         ]);
     }
+    public function showDocs(Request $request)
+    {
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $books = Book::where('deleted', false);
+        $contracts = Contract::where('deleted', false);
+        $notes = Note::where('deleted', false);
+        $papers = Paper::where('deleted', false);
+        if (isset($request['user_id'])) {
+            $books =  $books->where('user_id', $request['user_id']);
+            $contracts =  $contracts->where('user_id', $request['user_id']);
+            $notes =  $notes->where('user_id', $request['user_id']);
+            $papers = $papers->where('user_id', $request['user_id']);
+        }
+        if (isset($request['date_from']) && isset($request['date_to'])) {
+            $date = new DateTime($request['date_from']);
+            $date->modify('-1 day');
+            $from = $date->format('Y-m-d');
+            $to = $request['date_to'];
+
+            $contracts = $contracts->whereBetween('doc_date', [$from . '%', $to . '%']);
+            $books = $books->whereBetween('doc_date', [$from . '%', $to . '%']);
+            $papers = $papers->whereBetween('doc_date', [$from . '%', $to . '%']);
+            $notes = $notes->whereBetween('doc_date', [$from . '%', $to . '%']);
+        }
+
+        $books =  $books->get();
+        $contracts = $contracts->get();
+        $notes =  $notes->get();
+        $papers = $papers->get();
+        $merged = $books->merge($contracts)->merge($contracts)->merge($notes)->merge($papers);
+        $merged = $merged->sortByDesc('created_at')->values()->all();
+        $merged = $this->myPaginate($merged, 15);
+        return response()->json([
+            'response' => $merged
+        ]);
+    }
     public function test(Request $request)
     {
-       
-       $book = Book::findOrFail([1,2]);
-       return $book;
+
+        $book = Book::findOrFail([1, 2]);
+        return $book;
+    }
+    public function myPaginate($items, $perPage = 5, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 }

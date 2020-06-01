@@ -14,10 +14,14 @@ class Note extends Model
     protected $casts = [
         'images' => 'array',
     ];
-    protected $appends = ['temp'];
+    protected $appends = ['temp', "doc_type"];
     public function getTempAttribute()
     {
         return null;
+    }
+    public function getDocTypeAttribute()
+    {
+        return "Note";
     }
 
     public function company()

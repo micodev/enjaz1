@@ -14,10 +14,14 @@ class Paper extends Model
     protected $casts = [
         'images' => 'array',
     ];
-    protected $appends = ['temp'];
+    protected $appends = ['temp' , 'doc_type'];
     public function getTempAttribute()
     {
         return null;
+    }
+    public function getDocTypeAttribute()
+    {
+        return "Paper";
     }
     // protected $appends = ['company_id'];
     // protected $hidden = ['company_id'];

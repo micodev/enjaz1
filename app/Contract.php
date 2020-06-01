@@ -12,12 +12,16 @@ class Contract extends Model
         'user_id', 'action_id', 'deleted', 'body'
 
     ];
-    protected $appends = ['temp', 'qr'];
+    protected $appends = ['temp', 'qr', "doc_type"];
     // protected $hidden = ['deleted'];
 
     public function getTempAttribute()
     {
         return null;
+    }
+    public function getDocTypeAttribute()
+    {
+        return "Contract";
     }
     public function getqrAttribute()
     {
