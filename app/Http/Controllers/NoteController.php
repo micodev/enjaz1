@@ -213,7 +213,6 @@ class noteController extends Controller
     public function update(Request $request)
     {
         $user = $this->getUser($request->bearerToken());
-        // $user = User::where('id', '1')->first();
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
 
 
@@ -226,7 +225,6 @@ class noteController extends Controller
             'outcoming' => 'required',
             'company_id' => 'required | integer'
         ]);
-        //  return $request;
         if ($validator->fails())
             return response()->json([
                 'response' => 5
