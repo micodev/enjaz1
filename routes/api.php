@@ -47,7 +47,8 @@ Route::middleware(['cors', 'isActive', 'isNotUser'])->group(function () {
     Route::post('/register/user', 'UserController@register');
     Route::post('/delete/user', 'UserController@delete');
     Route::put('/update/user', 'UserController@update');
-    Route::get('/show/users', 'UserController@show');
+    Route::get('/show/users/{id?}', 'UserController@show');
+ 
 });
 Route::middleware(['cors', 'isActive'])->group(function () {
 

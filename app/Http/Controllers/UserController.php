@@ -157,10 +157,14 @@ class UserController extends Controller
                 'response' => 2
             ], 422);
     }
-    public function show()
+    public function show($id = null)
     {
-
-        $users =  User::with(['company', 'role'])->orderBy('created_at', 'desc')->paginate(20);
+        // return $request->query('company', 'default');
+        if ($id != null)
+            $users =  User::with(['company', 'role'])->orderBy('created_at', 'desc')
+                ->where('company_id', $id)->paginate(20);
+        else
+            $users =  User::with(['company', 'role'])->orderBy('created_at', 'desc')->paginate(20);
 
         return response()->json([
             'response' => $users

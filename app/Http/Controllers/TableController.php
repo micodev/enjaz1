@@ -427,15 +427,51 @@ class TableController extends Controller
     public function showDocs(Request $request)
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
-        $books = Book::where('deleted', false);
-        $contracts = Contract::where('deleted', false);
-        $notes = Note::where('deleted', false);
-        $papers = Paper::where('deleted', false);
+        if (isset($request['doc_type'])) {
+            switch ($request['doc_type']) {
+                case "book":
+                    $books = Book::where('deleted', false);
+                    break;
+                case "contract":
+                    $contracts = Contract::where('deleted', false);
+                    break;
+                case "note":
+                    $notes = Note::where('deleted', false);
+                    break;
+                case "paper":
+                    $papers = Paper::where('deleted', false);
+                    break;
+            }
+        } else {
+            $books = Book::where('deleted', false);
+            $contracts = Contract::where('deleted', false);
+            $notes = Note::where('deleted', false);
+            $papers = Paper::where('deleted', false);
+        }
+
         if (isset($request['user_id'])) {
-            $books =  $books->where('user_id', $request['user_id']);
-            $contracts =  $contracts->where('user_id', $request['user_id']);
-            $notes =  $notes->where('user_id', $request['user_id']);
-            $papers = $papers->where('user_id', $request['user_id']);
+
+            if (isset($request['doc_type'])) {
+                switch ($request['doc_type']) {
+                    case "book":
+                        $books =  $books->where('user_id', $request['user_id']);
+                        break;
+                    case "contract":
+                        $contracts =  $contracts->where('user_id', $request['user_id']);
+                        break;
+                    case "note":
+                        $notes =  $notes->where('user_id', $request['user_id']);
+                        break;
+                    case "paper":
+                        $papers = $papers->where('user_id', $request['user_id']);
+                        break;
+                }
+            } else {
+                $books =  $books->where('user_id', $request['user_id']);
+                $contracts =  $contracts->where('user_id', $request['user_id']);
+                $notes =  $notes->where('user_id', $request['user_id']);
+                $papers = $papers->where('user_id', $request['user_id']);
+            }
         }
         if (isset($request['date_from']) && isset($request['date_to'])) {
             $date = new DateTime($request['date_from']);
@@ -443,17 +479,58 @@ class TableController extends Controller
             $from = $date->format('Y-m-d');
             $to = $request['date_to'];
 
-            $contracts = $contracts->whereBetween('doc_date', [$from . '%', $to . '%']);
-            $books = $books->whereBetween('doc_date', [$from . '%', $to . '%']);
-            $papers = $papers->whereBetween('doc_date', [$from . '%', $to . '%']);
-            $notes = $notes->whereBetween('doc_date', [$from . '%', $to . '%']);
+            if (isset($request['doc_type'])) {
+                switch ($request['doc_type']) {
+                    case "book":
+                        $books = $books->whereBetween('doc_date', [$from . '%', $to . '%']);
+                        break;
+                    case "contract":
+                        $contracts = $contracts->whereBetween('doc_date', [$from . '%', $to . '%']);
+                        break;
+                    case "note":
+                        $notes = $notes->whereBetween('doc_date', [$from . '%', $to . '%']);
+                        break;
+                    case "paper":
+                        $papers = $papers->whereBetween('doc_date', [$from . '%', $to . '%']);
+                        break;
+                }
+            } else {
+                $contracts = $contracts->whereBetween('doc_date', [$from . '%', $to . '%']);
+                $books = $books->whereBetween('doc_date', [$from . '%', $to . '%']);
+                $papers = $papers->whereBetween('doc_date', [$from . '%', $to . '%']);
+                $notes = $notes->whereBetween('doc_date', [$from . '%', $to . '%']);
+            }
         }
 
-        $books =  $books->get();
-        $contracts = $contracts->get();
-        $notes =  $notes->get();
-        $papers = $papers->get();
-        $merged = $books->merge($contracts)->merge($contracts)->merge($notes)->merge($papers);
+        if (isset($request['doc_type'])) {
+            switch ($request['doc_type']) {
+                case "book":
+                    $books =  $books->get();
+                    $merged = $books;
+                    break;
+                case "contract":
+                    $contracts = $contracts->get();
+                    $merged = $contracts;
+                    break;
+                case "note":
+                    $notes =  $notes->get();
+                    $merged = $notes;
+                    break;
+                case "paper":
+                    $papers = $papers->get();
+                    $merged = $papers;
+                    break;
+            }
+        } else {
+            $books =  $books->get();
+            $contracts = $contracts->get();
+            $notes =  $notes->get();
+            $papers = $papers->get();
+            $merged = $books->merge($contracts)->merge($notes)->merge($papers);
+        }
+
+
+
         $merged = $merged->sortByDesc('created_at')->values()->all();
         $merged = $this->myPaginate($merged, 15);
         return response()->json([
