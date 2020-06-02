@@ -427,6 +427,9 @@ class TableController extends Controller
     public function showDocs(Request $request)
     {
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        $user = $this->getUser($request->bearerToken());
+      
+
         if (isset($request['doc_type'])) {
             switch ($request['doc_type']) {
                 case "book":
@@ -450,6 +453,9 @@ class TableController extends Controller
         }
 
         if (isset($request['user_id'])) {
+            if ($user->role_id != 1)
+            $request['user_id'] = $user->id;
+            
 
             if (isset($request['doc_type'])) {
                 switch ($request['doc_type']) {
@@ -533,7 +539,7 @@ class TableController extends Controller
 
         $merged = $merged->sortByDesc('created_at')->values()->all();
         if (isset($request['company_id']))
-        $merged = collect($merged)->where('company_id' , $request['company_id']);
+            $merged = collect($merged)->where('company_id', $request['company_id']);
         $merged = $this->myPaginate($merged, 15);
         return response()->json([
             'response' => $merged
@@ -542,7 +548,7 @@ class TableController extends Controller
     public function test(Request $request)
     {
 
-        $book = Book::where('deleted', false) ->get();
+        $book = Book::where('deleted', false)->get();
         $book = collect($book)->where('id', 11);
         return $book;
     }
