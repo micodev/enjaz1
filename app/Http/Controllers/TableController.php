@@ -426,8 +426,9 @@ class TableController extends Controller
     }
     public function showDocs(Request $request)
     {
-        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
         $user = $this->getUser($request->bearerToken());
+        $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
+        
       
 
         if (isset($request['doc_type'])) {
