@@ -21,7 +21,7 @@ class Paper extends Model
     }
     public function getDocTypeAttribute()
     {
-        return "Paper";
+        return 3;
     }
     // protected $appends = ['company_id'];
     // protected $hidden = ['company_id'];

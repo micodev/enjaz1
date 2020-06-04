@@ -23,7 +23,7 @@ class Book extends Model
     }
     public function getDocTypeAttribute()
     {
-        return "Book";
+        return 1;
     }
     public function getqrAttribute()
     {

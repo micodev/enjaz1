@@ -21,7 +21,7 @@ class Contract extends Model
     }
     public function getDocTypeAttribute()
     {
-        return "Contract";
+        return 2;
     }
     public function getqrAttribute()
     {

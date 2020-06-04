@@ -428,22 +428,22 @@ class TableController extends Controller
     {
         $user = $this->getUser($request->bearerToken());
         $request = json_decode($request->getContent(), true) ? json_decode($request->getContent(), true) : [];
-        
-      
+
+
 
         if (isset($request['doc_type'])) {
             switch ($request['doc_type']) {
-                case "book":
+                case 1:
                     $books = Book::where('deleted', false);
                     break;
-                case "contract":
+                case 2:
                     $contracts = Contract::where('deleted', false);
                     break;
-                case "note":
-                    $notes = Note::where('deleted', false);
-                    break;
-                case "paper":
+                case 3:
                     $papers = Paper::where('deleted', false);
+                    break;
+                case 4:
+                    $notes = Note::where('deleted', false);
                     break;
             }
         } else {
@@ -455,22 +455,22 @@ class TableController extends Controller
 
         if (isset($request['user_id'])) {
             if ($user->role_id != 1)
-            $request['user_id'] = $user->id;
-            
+                $request['user_id'] = $user->id;
+
 
             if (isset($request['doc_type'])) {
                 switch ($request['doc_type']) {
-                    case "book":
+                    case 1:
                         $books =  $books->where('user_id', $request['user_id']);
                         break;
-                    case "contract":
+                    case 2:
                         $contracts =  $contracts->where('user_id', $request['user_id']);
                         break;
-                    case "note":
-                        $notes =  $notes->where('user_id', $request['user_id']);
-                        break;
-                    case "paper":
+                    case 3:
                         $papers = $papers->where('user_id', $request['user_id']);
+                        break;
+                    case 4:
+                        $notes =  $notes->where('user_id', $request['user_id']);
                         break;
                 }
             } else {
@@ -488,17 +488,17 @@ class TableController extends Controller
 
             if (isset($request['doc_type'])) {
                 switch ($request['doc_type']) {
-                    case "book":
+                    case 1:
                         $books = $books->whereBetween('doc_date', [$from . '%', $to . '%']);
                         break;
-                    case "contract":
+                    case 2:
                         $contracts = $contracts->whereBetween('doc_date', [$from . '%', $to . '%']);
                         break;
-                    case "note":
-                        $notes = $notes->whereBetween('doc_date', [$from . '%', $to . '%']);
-                        break;
-                    case "paper":
+                    case 3:
                         $papers = $papers->whereBetween('doc_date', [$from . '%', $to . '%']);
+                        break;
+                    case 4:
+                        $notes = $notes->whereBetween('doc_date', [$from . '%', $to . '%']);
                         break;
                 }
             } else {
@@ -511,21 +511,21 @@ class TableController extends Controller
 
         if (isset($request['doc_type'])) {
             switch ($request['doc_type']) {
-                case "book":
+                case 1:
                     $books =  $books->get();
                     $merged = $books;
                     break;
-                case "contract":
+                case 2:
                     $contracts = $contracts->get();
                     $merged = $contracts;
                     break;
-                case "note":
-                    $notes =  $notes->get();
-                    $merged = $notes;
-                    break;
-                case "paper":
+                case 3:
                     $papers = $papers->get();
                     $merged = $papers;
+                    break;
+                case 4:
+                    $notes =  $notes->get();
+                    $merged = $notes;
                     break;
             }
         } else {

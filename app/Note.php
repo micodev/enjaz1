@@ -21,7 +21,7 @@ class Note extends Model
     }
     public function getDocTypeAttribute()
     {
-        return "Note";
+        return 4;
     }
 
     public function company()
